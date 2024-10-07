@@ -17,7 +17,7 @@ from PyQt5.uic import loadUi
 class LineNumberArea(QWidget):
     def __init__(self, parent=None):
         super(LineNumberArea, self).__init__(parent)
-        self.line_number_font = QFont("Consalas", 8)
+        self.line_number_font = QFont("Consolas", 8)
 
     def sizeHint(self):
         return self.editor.lineNumberAreaSize()
@@ -96,7 +96,7 @@ class ConvertVideoThread(QThread):
 
     def __init__(self, codec, crf, fps, preset, input_files, output_dir, ffmpeg_path, current_file_name):
         super(ConvertVideoThread, self).__init__()
-        self .codec = codec
+        self.codec = codec
         self.crf = crf
         self.fps = fps
         self.preset = preset
@@ -105,14 +105,6 @@ class ConvertVideoThread(QThread):
         self.ffmpeg_path = ffmpeg_path
         self.current_file_name = current_file_name
         self.total_duration = None
-
-    def update_new_file_name(self, text):
-        if '[N]' in text:
-            input_files = self.text_convert.toPlainText().splitlines()
-            output_name = [os.path.dirname(file) + '\\' + text.replace('[N]', os.path.basename(file)) for file in input_files]
-            self.current_fileName.setEditText('\n'.join(output_name))
-        else:
-            self.current_fileName.setEditText(text)
 
     def run(self):
         total_files = len(self.input_files)
@@ -173,7 +165,7 @@ class FileInfoWidget(QWidget):
 
         self.current_fileName = current_fileName
 
-        font = QFont("Consalas", 8)
+        font = QFont("Consolas", 8)
 
         self.text_edit_left = text_convert
         self.text_edit_left.setFont(font)
@@ -213,17 +205,6 @@ class FileInfoWidget(QWidget):
 
         # Обновляем среднее окно при изменении текста в QComboBox
         self.current_fileName.currentTextChanged.connect(self.update_middle_editor)
-
-    def update_new_file_name(self):
-        # Обновляем среднее текстовое поле с фактическими именами файлов
-        template = self.current_fileName.currentText()
-        input_files = self.text_edit_left.toPlainText().splitlines()
-        if '[N]' in template:
-            output_names = [os.path.dirname(file) + '\\' + template.replace('[N]', os.path.splitext(os.path.basename(file))[0]) for file in input_files]
-            self.text_edit_middle.setPlainText('\n'.join(output_names))
-        else:
-            self.text_edit_middle.setPlainText(template)
-
 
     def sync_scrolls(self, value):
         if self.syncing:
@@ -345,18 +326,13 @@ class FileInfoWidget(QWidget):
         else:
             return f"{size_bytes / 1024**3:.2f} GB"
 
-    def update_new_file_name(self):
-        # Обновляем QComboBox с шаблоном имени файла
-        template = '[N]'  # Или любой другой шаблон, который вы используете
-        self.current_fileName.setCurrentText(template)
-
 class MainUI(QMainWindow):
     CUSTOM_FPS_ENABLED = 2
 
     def __init__(self):
         super(MainUI, self).__init__()
         base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-        ui_path = os.path .join(base_path, "interface.ui")
+        ui_path = os.path.join(base_path, "interface.ui")
 
         loadUi(ui_path, self)
 
@@ -379,14 +355,14 @@ class MainUI(QMainWindow):
         self.btn_path_save.clicked.connect(self.select_folder_path_save)
         self.btn_path_ffmpeg.clicked.connect(self.select_path_ffmpeg)
         self.btn_path_ytdlp.clicked.connect(self.select_ytdlp_path)
-        self.current_fileName.currentText()
         self.current_fileName.setEditable(True)
         self.current_fileName: QtWidgets.QComboBox = self.findChild(QtWidgets.QComboBox, "current_fileName")
 
-        self.mousePressEvent = self.on_mouse_press
-
-    def on_mouse_press(self, event):
-        if not (self.path_save.underMouse() or self.path_ffmpeg.underMouse() or self.path_ytdlp.underMouse() or self.text_convert.underMouse()):
+    def mousePressEvent(self, event):
+        if not (self.path_save.underMouse() or
+                self.path_ffmpeg.underMouse() or
+                self.path_ytdlp.underMouse() or
+                self.text_convert.underMouse()):
             self.path_save.clearFocus()
             self.path_ffmpeg.clearFocus()
             self.path_ytdlp.clearFocus()
@@ -401,11 +377,8 @@ class MainUI(QMainWindow):
     def select_folder_path_save(self):
         folder_path: str = QtWidgets.QFileDialog.getExistingDirectory(self, "Выберите директорию для сохранения")
         if folder_path:
-            if os.path.exists(folder_path):
-                self.path_save.setText(self._process_path(folder_path))
-                print(f"Выбрана папка для сохранения: {folder_path}")
-            else:
-                print("Папка не существует.")
+            self.path_save.setText(self._process_path(folder_path))
+            print(f"Выбрана папка для сохранения: {folder_path}")
 
     def newPressed(self):
         print("Кнопка нажата, начинаем конвертацию...")
@@ -425,8 +398,6 @@ class MainUI(QMainWindow):
             if os.path.exists(file_path):
                 self.path_ffmpeg.setText(self._process_path(file_path))
                 print(f"Выбран путь к ffmpeg: {file_path}")
-            else:
-                print("Файл не существует.")
 
     def select_ytdlp_path(self):
         file_path: str = QtWidgets.QFileDialog.getOpenFileName(self, "Выберите путь к ytdlp")[0]
@@ -434,8 +405,6 @@ class MainUI(QMainWindow):
             if os.path.exists(file_path):
                 self.path_ytdlp.setText(self._process_path(file_path))
                 print(f"Выбран путь к ytdlp: {file_path}")
-            else:
-                print("Файл не существует.")
 
     def convert_video(self):
         codec = self.list_codec.currentText()
@@ -460,24 +429,19 @@ class MainUI(QMainWindow):
         print(f"FFmpeg Path: {ffmpeg_path}")
         print(f"Current File Name: {current_fileName}")
 
-        if not processed_input_files or not ffmpeg_path or not output_dir:
-            print("Ошибка: Недостаточно данных для конвертации. Проверьте введенные пути и файлы.")
-            self.statusbar.showMessage("Ошибка: Недостаточно данных для конвертации.")
-            return
+        if processed_input_files and output_dir and ffmpeg_path:
+            self.thread = ConvertVideoThread(codec, crf, fps, preset, processed_input_files, output_dir, ffmpeg_path, current_fileName)
+            self.thread.progress_signal.connect(self.update_progress_bar)
+            self.thread.status_signal.connect(self.update_status)
+            self.thread.start()
+        else:
+            print("Отсутствуют необходимые параметры для конвертации.")
 
-        self.progressBar_convert.setRange(0, 100)
-        self.progressBar_convert.setValue(0)
-
-        self.thread = ConvertVideoThread(codec, crf, fps, preset, processed_input_files, output_dir, ffmpeg_path, current_fileName)
-        self.thread.progress_signal.connect(self.update_progress)
-        self.thread.status_signal.connect(self.update_status)
-        self.thread.start()
-
-    def update_progress(self, value):
+    def update_progress_bar(self, value: int):
         self.progressBar_convert.setValue(value)
 
-    def update_status(self, status):
-        self.statusbar.showMessage(status)
+    def update_status(self, message: str):
+        self.statusbar.showMessage(message)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
