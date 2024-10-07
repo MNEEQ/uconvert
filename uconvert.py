@@ -283,7 +283,7 @@ class FileInfoWidget(QWidget):
 				file_date = datetime.fromtimestamp(os.path.getmtime(normalized_path)).strftime('%Y-%m-%d %H:%M:%S')
 				file_info = self.get_file_info(normalized_path)
 				if file_info['is_video']:
-					output_lines.append(f"{file_info['duration']}\t{self.format_size(file_size)}\t{file_info['resolution']}\t{file_date}")
+					output_lines.append(f"{file_info['duration']}\t{self.format_size(file_size)}\t{file_info['resolution']}\t{file_info['fps']}\t{file_date}")
 				else:
 					output_lines.append(f"{file_info['duration']}\t{self.format_size(file_size)}\t\t{file_date}")
 			else:
@@ -313,9 +313,11 @@ class FileInfoWidget(QWidget):
 				if video_streams:
 					width = video_streams[0]['width']
 					height = video_streams[0]['height']
+					fps = eval(video_streams[0]['r_frame_rate'])  # Добавляем FPS
 					return {
 						"duration": self.format_duration(duration),
 						"resolution": f"{width}x{height}",
+						"fps": f"{fps:.3f} fps",  # Форматируем FPS
 						"is_video": True
 					}
 				else:
@@ -326,7 +328,7 @@ class FileInfoWidget(QWidget):
 					}
 		except Exception as e:
 			print(f"Ошибка извлечения информации о файле: {e}")
-		return {"duration": "", "resolution": "", "is_video": False}
+		return {"duration": "", "resolution": "", "fps": "", "is_video": False}
 
 	def format_duration(self, seconds):
 		hours, rem = divmod(int(seconds), 3600)
