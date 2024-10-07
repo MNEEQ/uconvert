@@ -190,23 +190,29 @@ class FileInfoWidget(QWidget):
 		self.text_edit_right.setReadOnly(True)
 
 		self.splitter = QSplitter(Qt.Horizontal)
+		self.splitter.setHandleWidth(4)  # Устанавливаем минимальную ширину разделителя
 		self.splitter.addWidget(self.text_edit_left)
 		self.splitter.addWidget(self.text_edit_middle)
 		self.splitter.addWidget(self.text_edit_right)
 
 		layout = QVBoxLayout(self)
+		layout.setContentsMargins(0, 0, 0, 0)  # Убираем отступы
+		layout.setSpacing(0)  # Убираем промежутки между элементами
 		layout.addWidget(self.splitter)
 		self.setLayout(layout)
 
+		# Синхронизация скроллинга между окнами
 		self.text_edit_left.verticalScrollBar().valueChanged.connect(self.sync_scrolls)
 		self.text_edit_middle.verticalScrollBar().valueChanged.connect(self.sync_scrolls)
 		self.text_edit_right.verticalScrollBar().valueChanged.connect(self.sync_scrolls)
 
+		# Обновляем среднее и правое окно при изменении текста
 		self.text_edit_left.textChanged.connect(self.update_middle_editor)
 		self.text_edit_left.textChanged.connect(self.update_right_editor)
 		self.syncing = False
 
-		self.current_fileName.currentTextChanged.connect(self.update_middle_editor)  # Обновляем среднее окно при изменении текста в QComboBox
+		# Обновляем среднее окно при изменении текста в QComboBox
+		self.current_fileName.currentTextChanged.connect(self.update_middle_editor)
 
 	def update_new_file_name(self):
 		# Обновляем среднее текстовое поле с фактическими именами файлов
