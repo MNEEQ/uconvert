@@ -147,7 +147,7 @@ class ConvertVideoThread(QThread):
 
                     # Объединяем строки для статуса
                     status_message = (f"render: ({current_file + 1}/{total_files}) "
-                                      f"time remaining: {remaining_time_str} "
+                                      f"remaining: {remaining_time_str} "
                                       f"name: {filename}")
                     self.status_signal.emit(status_message)
 
@@ -159,7 +159,7 @@ class ConvertVideoThread(QThread):
             self.progress_signal.emit(100)
             current_file += 1
             self.status_signal.emit(f"render: ({current_file}/{total_files}) " 
-                                    f"time remaining: 00:00:00 "
+                                    f"remaining: 00:00:00 "
                                     f"name: {filename} status: done")
 
     def get_video_fps(self, input_file):
@@ -403,27 +403,32 @@ class MainUI(QMainWindow):
 
         loadUi(ui_path, self)
 
+        # Получаем основной макет для таба 'tab_convert'
         self.layout_text = self.tab_convert.layout()
 
+        # Инициализируем и добавляем пользовательские виджеты
         self.text_convert = NumberedTextEdit(self)
         self.file_info_widget = FileInfoWidget(self.text_convert, self.current_fileName)
-        self.layout_text.addWidget(self.file_info_widget)
-
-        self.progressBar_convert: QProgressBar = self.findChild(QtWidgets.QProgressBar, "progressBar_convert")
+        self.layout_text.addWidget(self.file_info_widget, 1, 0, 1, 0)
         self.layout_text.addWidget(self.progressBar_convert)
+        self.layout_text.addWidget(self.btn_render)
+
+        # Инициализируем элементы интерфейса
+        self.progressBar_convert: QProgressBar = self.findChild(QtWidgets.QProgressBar, "progressBar_convert")
         self.path_save: QLineEdit = self.findChild(QtWidgets.QLineEdit, "path_save")
         self.path_ffmpeg: QLineEdit = self.findChild(QtWidgets.QLineEdit, "path_ffmpeg")
         self.path_ytdlp: QLineEdit = self.findChild(QtWidgets.QLineEdit, "path_ytdlp")
         self.statusbar: QStatusBar = self.findChild(QtWidgets.QStatusBar, "statusbar")
-        self.btn_render = self.findChild(QtWidgets.QPushButton, "btn_render")
+        self.btn_render: QPushButton = self.findChild(QtWidgets.QPushButton, "btn_render")
+        self.current_fileName: QtWidgets.QComboBox = self.findChild(QtWidgets.QComboBox, "current_fileName")
 
+        # Настройка событий
         self.fpsEnable.stateChanged.connect(self.fpsCustom)
         self.btn_render.clicked.connect(self.newPressed)
         self.btn_path_save.clicked.connect(self.select_folder_path_save)
         self.btn_path_ffmpeg.clicked.connect(self.select_path_ffmpeg)
         self.btn_path_ytdlp.clicked.connect(self.select_ytdlp_path)
         self.current_fileName.setEditable(True)
-        self.current_fileName: QtWidgets.QComboBox = self.findChild(QtWidgets.QComboBox, "current_fileName")
 
     def mousePressEvent(self, event):
         if not (self.path_save.underMouse() or
