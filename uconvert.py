@@ -116,7 +116,7 @@ class ConvertVideoThread(QThread):
             output_name = self.current_file_name.replace('[N]', os.path.splitext(filename)[0])
             output_file = os.path.join(self.output_dir, output_name + ".mp4")
 
-            self.status_signal.emit(f"Начинаем конвертацию файла {filename} ({current_file + 1}/{total_files})")
+            self.status_signal.emit(f"Начинаем конвертацию файла ({current_file + 1}/{total_files}) {filename}")
 
             command = [self.ffmpeg_path, '-i', input_file]
             if self.fps is not None:
@@ -139,9 +139,7 @@ class ConvertVideoThread(QThread):
             process.wait()
             self.progress_signal.emit(100)
             current_file += 1
-            self.status_signal.emit(f"Конвертация файла {filename} завершена ({current_file}/{total_files}).")
-
-        self.status_signal.emit("Конвертация завершена")
+            self.status_signal.emit(f"Конвертация файла ({current_file}/{total_files}) {filename} завершена")
 
     def _get_duration(self, line):
         match = self._DURATION_RX.search(line)
