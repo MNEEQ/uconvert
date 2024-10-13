@@ -664,7 +664,7 @@
             </font>
            </property>
            <property name="text">
-            <string>C:\Users\mneeq\AppData\Local\Programs\Python\Python310\Scripts\yt-dlp.exe</string>
+            <string/>
            </property>
            <property name="frame">
             <bool>true</bool>
@@ -747,7 +747,7 @@
             </font>
            </property>
            <property name="text">
-            <string>C:\ffmpeg\bin\ffmpeg.exe</string>
+            <string/>
            </property>
            <property name="frame">
             <bool>true</bool>

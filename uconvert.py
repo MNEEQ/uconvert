@@ -163,7 +163,7 @@ class ConvertVideoThread(QThread):
                                     f"name: {filename} status: done")
 
     def get_video_fps(self, input_file):
-        """Функция для извлечения FPS из видео."""
+        # Функция для извлечения FPS из видео.
         process = subprocess.Popen([self.ffmpeg_path, '-i', input_file],
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
         stderr = process.stderr.read()
@@ -351,8 +351,15 @@ class FileInfoWidget(QWidget):
             'ffprobe', '-v', 'error', '-show_entries',
             'format=duration', '-show_streams', '-of', 'json', file_path
         ]
+        
+        # Создаем объект STARTUPINFO
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW  # Скрываем окно консоли
+
         try:
-            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+            # Запускаем subprocess с использованием STARTUPINFO
+            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, 
+                                    universal_newlines=True, startupinfo=startupinfo)
             if result.returncode == 0:
                 metadata = json.loads(result.stdout)
                 duration = float(metadata['format']['duration'])
