@@ -549,6 +549,20 @@ class MainUI(QMainWindow):
             "checkBox_alwaysOnTop": self.checkBox_alwaysOnTop.isChecked()
         }
 
+        # Сохранение позиции окна, если включена галочка checkBox_savePos
+        if self.checkBox_savePos.isChecked():
+            settings["window_position"] = {
+                "x": self.x(),
+                "y": self.y()
+            }
+
+        # Сохранение размера окна, если включена галочка checkBox_saveSize
+        if self.checkBox_saveSize.isChecked():
+            settings["window_size"] = {
+                "width": self.width(),
+                "height": self.height()
+            }
+
         with open(self.SETTINGS_FILE, "w", encoding="utf-8") as f:
             json.dump(settings, f, ensure_ascii=False, indent=4)
 
@@ -571,7 +585,14 @@ class MainUI(QMainWindow):
         self.checkBox_savePos.setChecked(settings.get("checkBox_savePos", False))
         self.checkBox_saveSize.setChecked(settings.get("checkBox_saveSize", False))
         self.checkBox_alwaysOnTop.setChecked(settings.get("checkBox_alwaysOnTop", False))
-        self.update_always_on_top()
+
+        # Восстановление позиции окна, если включена галочка checkBox_savePos
+        if self.checkBox_savePos.isChecked() and "window_position" in settings:
+            self.move(settings["window_position"]["x"], settings["window_position"]["y"])
+
+        # Восстановление размера окна, если включена галочка checkBox_saveSize
+        if self.checkBox_saveSize.isChecked() and "window_size" in settings:
+            self.resize(settings["window_size"]["width"], settings["window_size"]["height"])
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
