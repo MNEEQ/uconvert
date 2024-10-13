@@ -546,18 +546,19 @@ class MainUI(QMainWindow):
             "path_ytdlp": self.path_ytdlp.text(),
             "checkBox_savePos": self.checkBox_savePos.isChecked(),
             "checkBox_saveSize": self.checkBox_saveSize.isChecked(),
-            "checkBox_alwaysOnTop": self.checkBox_alwaysOnTop.isChecked()
+            "checkBox_alwaysOnTop": self.checkBox_alwaysOnTop.isChecked(),
+            "window_fullscreen": self.isFullScreen(),  # Сохраняем статус полноэкранного режима
+            "window_maximized": self.isMaximized()     # Сохраняем статус развернутого окна
         }
 
-        # Сохранение позиции окна, если включена галочка checkBox_savePos
-        if self.checkBox_savePos.isChecked():
+        # Если окно не полноэкранное и не развернутое, сохраняем его положение и размеры
+        if self.checkBox_savePos.isChecked() and not self.isFullScreen() and not self.isMaximized():
             settings["window_position"] = {
                 "x": self.x(),
                 "y": self.y()
-            }
+        }
 
-        # Сохранение размера окна, если включена галочка checkBox_saveSize
-        if self.checkBox_saveSize.isChecked():
+        if self.checkBox_saveSize.isChecked() and not self.isFullScreen() and not self.isMaximized():
             settings["window_size"] = {
                 "width": self.width(),
                 "height": self.height()
@@ -586,13 +587,21 @@ class MainUI(QMainWindow):
         self.checkBox_saveSize.setChecked(settings.get("checkBox_saveSize", False))
         self.checkBox_alwaysOnTop.setChecked(settings.get("checkBox_alwaysOnTop", False))
 
-        # Восстановление позиции окна, если включена галочка checkBox_savePos
-        if self.checkBox_savePos.isChecked() and "window_position" in settings:
+        # Восстановление позиции и размера окна, если не включен полноэкранный/развернутый режим
+        if self.checkBox_savePos.isChecked() and "window_position" in settings and not settings.get("window_fullscreen", False) and not settings.get("window_maximized", False):
             self.move(settings["window_position"]["x"], settings["window_position"]["y"])
 
-        # Восстановление размера окна, если включена галочка checkBox_saveSize
-        if self.checkBox_saveSize.isChecked() and "window_size" in settings:
+        if self.checkBox_saveSize.isChecked() and "window_size" in settings and not settings.get("window_fullscreen", False) and not settings.get("window_maximized", False):
             self.resize(settings["window_size"]["width"], settings["window_size"]["height"])
+
+        # Восстановление полноэкранного режима
+        if settings.get("window_fullscreen", False):
+            self.showFullScreen()
+        # Восстановление развернутого окна
+        elif settings.get("window_maximized", False):
+            self.showMaximized()
+        else:
+            self.showNormal()  # Если окно не развернуто и не полноэкранное, показываем обычное окно
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
