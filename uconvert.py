@@ -400,6 +400,7 @@ class MainUI(QMainWindow):
         super(MainUI, self).__init__()
         base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
         ui_path = os.path.join(base_path, "interface.ui")
+        self.SETTINGS_FILE = "settings.json"
 
         loadUi(ui_path, self)
 
@@ -429,6 +430,7 @@ class MainUI(QMainWindow):
         self.btn_path_ffmpeg.clicked.connect(self.select_path_ffmpeg)
         self.btn_path_ytdlp.clicked.connect(self.select_ytdlp_path)
         self.current_fileName.setEditable(True)
+        self.load_settings()
 
     def mousePressEvent(self, event):
         if not (self.path_save.underMouse() or
@@ -518,6 +520,49 @@ class MainUI(QMainWindow):
 
     def update_status(self, message: str):
         self.statusbar.showMessage(message)
+
+    def closeEvent(self, event):
+        self.save_settings()
+        event.accept()
+
+    def save_settings(self):
+        settings = {
+            "current_fileName": self.current_fileName.currentText(),
+            "list_codec": self.list_codec.currentText(),
+            "crfCount": self.crfCount.value(),
+            "fpsEnable": self.fpsEnable.isChecked(),
+            "fpsCount": self.fpsCount.value(),
+            "list_ffmpeg_preset": self.list_ffmpeg_preset.currentText(),
+            "path_save": self.path_save.text(),
+            "path_ffmpeg": self.path_ffmpeg.text(),
+            "path_ytdlp": self.path_ytdlp.text(),
+            "checkBox_savePos": self.checkBox_savePos.isChecked(),
+            "checkBox_saveSize": self.checkBox_saveSize.isChecked(),
+            "checkBox_alwaysOnTop": self.checkBox_alwaysOnTop.isChecked()
+        }
+
+        with open(self.SETTINGS_FILE, "w", encoding="utf-8") as f:
+            json.dump(settings, f, ensure_ascii=False, indent=4)
+
+    def load_settings(self):
+        if not os.path.exists(self.SETTINGS_FILE):
+            return
+
+        with open(self.SETTINGS_FILE, "r", encoding="utf-8") as f:
+            settings = json.load(f)
+
+        self.current_fileName.setCurrentText(settings.get("current_fileName", ""))
+        self.list_codec.setCurrentText(settings.get("list_codec", ""))
+        self.crfCount.setValue(settings.get("crfCount", 23))
+        self.fpsEnable.setChecked(settings.get("fpsEnable", False))
+        self.fpsCount.setValue(settings.get("fpsCount", 30))
+        self.list_ffmpeg_preset.setCurrentText(settings.get("list_ffmpeg_preset", "medium"))
+        self.path_save.setText(settings.get("path_save", ""))
+        self.path_ffmpeg.setText(settings.get("path_ffmpeg", ""))
+        self.path_ytdlp.setText(settings.get("path_ytdlp", ""))
+        self.checkBox_savePos.setChecked(settings.get("checkBox_savePos", False))
+        self.checkBox_saveSize.setChecked(settings.get("checkBox_saveSize", False))
+        self.checkBox_alwaysOnTop.setChecked(settings.get("checkBox_alwaysOnTop", False))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
