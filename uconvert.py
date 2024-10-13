@@ -425,6 +425,7 @@ class MainUI(QMainWindow):
 
         # Настройка событий
         self.fpsEnable.stateChanged.connect(self.fpsCustom)
+        self.checkBox_alwaysOnTop.stateChanged.connect(self.update_always_on_top)
         self.btn_render.clicked.connect(self.newPressed)
         self.btn_path_save.clicked.connect(self.select_folder_path_save)
         self.btn_path_ffmpeg.clicked.connect(self.select_path_ffmpeg)
@@ -445,6 +446,13 @@ class MainUI(QMainWindow):
             self.crfCount.clearFocus()
             self.fpsCount.clearFocus()
             print("Курсор мыши находится вне полей ввода.")
+
+    def update_always_on_top(self):
+        if self.checkBox_alwaysOnTop.isChecked():
+            self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
+        else:
+            self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
+        self.show()  # Обновление окна
 
     def _process_path(self, path: str) -> str:
         drive, path = os.path.splitdrive(path)
@@ -563,6 +571,7 @@ class MainUI(QMainWindow):
         self.checkBox_savePos.setChecked(settings.get("checkBox_savePos", False))
         self.checkBox_saveSize.setChecked(settings.get("checkBox_saveSize", False))
         self.checkBox_alwaysOnTop.setChecked(settings.get("checkBox_alwaysOnTop", False))
+        self.update_always_on_top()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
