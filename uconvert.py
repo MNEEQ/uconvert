@@ -440,6 +440,8 @@ class MainUI(QMainWindow):
             self.path_ytdlp.clearFocus()
             self.text_convert.clearFocus()
             self.current_fileName.clearFocus()
+            self.crfCount.clearFocus()
+            self.fpsCount.clearFocus()
             print("Курсор мыши находится вне полей ввода.")
 
     def _process_path(self, path: str) -> str:
