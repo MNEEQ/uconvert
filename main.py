@@ -48,7 +48,7 @@ class MainUI(QMainWindow):
         # Настройка событий
         self.fpsEnable.stateChanged.connect(self.fpsCustom)
         self.checkBox_alwaysOnTop.stateChanged.connect(self.update_always_on_top)
-        self.btn_render.clicked.connect(self.newPressed)
+        self.btn_render.clicked.connect(self.renderPressed)
         self.btn_path_save.clicked.connect(self.select_folder_path_save)
         self.btn_path_ffmpeg.clicked.connect(self.select_path_ffmpeg)
         self.btn_path_ytdlp.clicked.connect(self.select_ytdlp_path)
@@ -86,7 +86,7 @@ class MainUI(QMainWindow):
             self.path_save.setText(self._process_path(folder_path))
             print(f"Выбрана папка для сохранения: {folder_path}")
 
-    def newPressed(self):
+    def renderPressed(self):
         print("Кнопка нажата, начинаем конвертацию...")
         self.convert_video()
 
