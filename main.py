@@ -1,7 +1,8 @@
+from interface.theme_main_window import setLightMode, setDarkMode
 from models.video_converter import ConvertVideoThread
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QApplication, QComboBox, QFileDialog, QLineEdit, QMainWindow, QProgressBar,
+    QApplication, QCheckBox, QComboBox, QFileDialog, QLineEdit, QMainWindow, QProgressBar,
     QPushButton, QStatusBar, QVBoxLayout, QWidget
 )
 from PyQt5.uic import loadUi
@@ -55,6 +56,10 @@ class MainUI(QMainWindow):
         self.current_fileName.setEditable(True)
         self.load_settings()
 
+        # Проверка стоит ли галочка темной темы
+        self.checkBox_setDarkMode = self.findChild(QCheckBox, "checkBox_setDarkMode")
+        self.checkBox_setDarkMode.stateChanged.connect(self.toggleDarkMode)
+
     def mousePressEvent(self, event):
         if not (self.path_save.underMouse() or
                 self.path_ffmpeg.underMouse() or
@@ -75,6 +80,12 @@ class MainUI(QMainWindow):
         else:
             self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
         self.show()  # Обновление окна
+
+    def toggleDarkMode(self):
+        if self.checkBox_setDarkMode.isChecked():
+            setDarkMode(self)
+        else:
+            setLightMode(self)
 
     def _process_path(self, path: str) -> str:
         drive, path = os.path.splitdrive(path)
@@ -170,7 +181,8 @@ class MainUI(QMainWindow):
             "checkBox_saveSize": self.checkBox_saveSize.isChecked(),
             "checkBox_alwaysOnTop": self.checkBox_alwaysOnTop.isChecked(),
             "window_fullscreen": self.isFullScreen(),   # Сохраняем статус полноэкранного режима
-            "window_maximized": self.isMaximized()      # Сохраняем статус развернутого окна
+            "window_maximized": self.isMaximized(),      # Сохраняем статус развернутого окна
+            "checkBox_setDarkMode": self.checkBox_setDarkMode.isChecked()
         }
 
         # Если окно не полноэкранное и не развернутое, сохраняем его положение и размеры
@@ -208,6 +220,8 @@ class MainUI(QMainWindow):
         self.checkBox_savePos.setChecked(settings.get("checkBox_savePos", False))
         self.checkBox_saveSize.setChecked(settings.get("checkBox_saveSize", False))
         self.checkBox_alwaysOnTop.setChecked(settings.get("checkBox_alwaysOnTop", False))
+        self.checkBox_setDarkMode.setChecked(settings.get("checkBox_setDarkMode", False))
+        self.toggleDarkMode()  # Установить тему в зависимости от состояния чекбокса
 
         # Восстановление позиции и размера окна, если не включен полноэкранный/развернутый режим
         if self.checkBox_savePos.isChecked() and "window_position" in settings and not settings.get("window_fullscreen", False) and not settings.get("window_maximized", False):
