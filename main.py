@@ -26,6 +26,8 @@ class MainUI(QMainWindow):
             raise FileNotFoundError(f"UI file not found: {ui_path}")
 
         loadUi(ui_path, self)
+        self.centralwidget.setContentsMargins(9, 0, 9, 9)
+        self.tabWidget.setContentsMargins(9, 0, 9, 9)
 
         # Получаем основной макет для таба 'tab_convert'
         self.layout_text = self.tab_convert.layout()
@@ -241,6 +243,7 @@ class MainUI(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setStyle('Fusion')  # Стиль
     window = MainUI()
     window.show()
     sys.exit(app.exec_())
