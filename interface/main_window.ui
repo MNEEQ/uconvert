@@ -25,7 +25,7 @@
     <property name="topMargin">
      <number>9</number>
     </property>
-    <item row="0" column="0">
+    <item row="1" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="acceptDrops">
        <bool>false</bool>
@@ -87,22 +87,6 @@
             </item>
            </widget>
           </item>
-          <item row="4" column="2">
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Minimum</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>13</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item row="4" column="6">
            <widget class="QCheckBox" name="fpsEnable">
             <property name="sizePolicy">
@@ -161,6 +145,22 @@
              <number>30</number>
             </property>
            </widget>
+          </item>
+          <item row="4" column="2">
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>13</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item row="4" column="8">
            <widget class="QComboBox" name="list_ffmpeg_preset">
@@ -231,6 +231,53 @@
             </item>
            </widget>
           </item>
+          <item row="4" column="4">
+           <widget class="QSpinBox" name="crfCount">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>49</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>49</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="maximum">
+             <number>1000</number>
+            </property>
+            <property name="value">
+             <number>28</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="9">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>30</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item row="4" column="3">
            <widget class="QLabel" name="label_crf">
             <property name="sizePolicy">
@@ -284,22 +331,6 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="9">
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>30</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item row="4" column="0">
            <widget class="QComboBox" name="current_fileName">
             <property name="sizePolicy">
@@ -327,34 +358,22 @@
             </item>
            </widget>
           </item>
-          <item row="4" column="4">
-           <widget class="QSpinBox" name="crfCount">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
+          <item row="4" column="11">
+           <widget class="QToolButton" name="btn_path_save">
             <property name="minimumSize">
              <size>
-              <width>49</width>
+              <width>25</width>
               <height>22</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>49</width>
+              <width>25</width>
               <height>22</height>
              </size>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-            <property name="maximum">
-             <number>1000</number>
-            </property>
-            <property name="value">
-             <number>28</number>
+            <property name="text">
+             <string>...</string>
             </property>
            </widget>
           </item>
@@ -411,6 +430,22 @@
             </property>
            </widget>
           </item>
+          <item row="4" column="12">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>52</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item row="4" column="10">
            <widget class="QLineEdit" name="path_save">
             <property name="sizePolicy">
@@ -439,44 +474,9 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="11">
-           <widget class="QToolButton" name="btn_path_save">
-            <property name="minimumSize">
-             <size>
-              <width>25</width>
-              <height>22</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>25</width>
-              <height>22</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="12">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>52</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
          </layout>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0">
          <widget class="QProgressBar" name="progressBar_convert">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -520,7 +520,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="2" column="1">
          <widget class="QPushButton" name="btn_render">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -546,6 +546,26 @@
           <property name="shortcut">
            <string>F12</string>
           </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QSplitter" name="splitter">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="NumberedTextEdit" name="textEdit1">
+           <property name="styleSheet">
+            <string notr="true">font: 8pt &quot;Consolas&quot;;</string>
+           </property>
+          </widget>
+          <widget class="NumberedTextEdit" name="textEdit2"/>
+          <widget class="NumberedTextEdit" name="textEdit3"/>
          </widget>
         </item>
        </layout>
@@ -977,9 +997,15 @@
    </property>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>NumberedTextEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header>widgets/numbered_text_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>path_save</tabstop>
-  <tabstop>btn_render</tabstop>
   <tabstop>list_codec</tabstop>
   <tabstop>crfCount</tabstop>
   <tabstop>fpsEnable</tabstop>

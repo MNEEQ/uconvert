@@ -29,17 +29,15 @@ class MainUI(QMainWindow):
         self.centralwidget.setContentsMargins(9, 0, 9, 9)
         self.tabWidget.setContentsMargins(9, 0, 9, 9)
 
-        # Получаем основной макет для таба 'tab_convert'
-        self.layout_text = self.tab_convert.layout()
-
         # Инициализируем и добавляем пользовательские виджеты
-        self.text_convert = NumberedTextEdit(self)
-        self.file_info_widget = FileInfoWidget(self.text_convert, self.current_fileName)
-        self.layout_text.addWidget(self.file_info_widget, 1, 0, 1, 0)
-        self.layout_text.addWidget(self.progressBar_convert)
-        self.layout_text.addWidget(self.btn_render)
+        self.text_convert: NumberedTextEdit = self.findChild(NumberedTextEdit, "textEdit1")
+        self.text_edit_middle: NumberedTextEdit = self.findChild(NumberedTextEdit, "textEdit2")
+        self.text_edit_right: NumberedTextEdit = self.findChild(NumberedTextEdit, "textEdit3")
+        self.current_fileName: QComboBox = self.findChild(QComboBox, "current_fileName")
 
-        # Инициализируем и добавляем пользовательские виджеты
+        # Создаем экземпляр FileInfoWidget с правильными аргументами
+        self.file_info_widget = FileInfoWidget(self.text_convert, self.text_edit_middle, self.text_edit_right, self.current_fileName)
+        # self.layout_text.addWidget(self.file_info_widget)
         self.progressBar_convert: QProgressBar = self.findChild(QProgressBar, "progressBar_convert")
         self.path_save: QLineEdit = self.findChild(QLineEdit, "path_save")
         self.path_ffmpeg: QLineEdit = self.findChild(QLineEdit, "path_ffmpeg")
@@ -205,6 +203,7 @@ class MainUI(QMainWindow):
 
     def load_settings(self):
         if not os.path.exists(self.SETTINGS_FILE):
+            setLightMode(self) # Если файл настроек не существует, устанавливаем светлую тему
             return
 
         with open(self.SETTINGS_FILE, "r", encoding="utf-8") as f:

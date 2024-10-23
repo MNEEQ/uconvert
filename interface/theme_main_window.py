@@ -23,8 +23,6 @@ def setLightMode(window: QMainWindow):
             border-radius: 2px;
         }
     ''')
-    window.file_info_widget.setStyleSheet('')
-    window.text_convert.setStyleSheet('')
 
 def setDarkMode(window: QMainWindow):
     window.setStyleSheet('''

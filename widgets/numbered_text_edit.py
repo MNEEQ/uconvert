@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QRect
-from PyQt5.QtGui import QColor, QFont, QPainter, QTextFormat
+from PyQt5.QtGui import QColor, QFont, QPainter
 from PyQt5.QtWidgets import QPlainTextEdit, QTextEdit, QWidget
 
 class LineNumberArea(QWidget):
@@ -12,7 +12,7 @@ class LineNumberArea(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        painter.fillRect(event.rect(), Qt.lightGray)
+        painter.fillRect(event.rect(), Qt.lightGray) # вместо Qt.lightGray Qt.lightGray QColor("#C0C0C0") или QColor(200, 200, 200)
         painter.setFont(self.line_number_font)
         block = self.parent().firstVisibleBlock()
         blockNumber = block.blockNumber()

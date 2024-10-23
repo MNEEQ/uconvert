@@ -9,38 +9,13 @@ import os
 import subprocess
 
 class FileInfoWidget(QWidget):
-    def __init__(self, text_convert, current_fileName, parent=None):
+    def __init__(self, text_convert, text_edit_middle, text_edit_right, current_fileName, parent=None):
         super(FileInfoWidget, self).__init__(parent)
 
         self.current_fileName = current_fileName
-
-        font = QFont("Consolas", 8)
-
         self.text_edit_left = text_convert
-        self.text_edit_left.setFont(font)
-        self.text_edit_left.setStyleSheet("QPlainTextEdit { padding-top: 0px; padding-bottom: 0px; }")
-
-        self.text_edit_middle = NumberedTextEdit()
-        self.text_edit_middle.setFont(font)
-        self.text_edit_middle.setStyleSheet("QPlainTextEdit { padding-top: 0px; padding-bottom: 0px; }")
-        self.text_edit_middle.setReadOnly(True)
-
-        self.text_edit_right = NumberedTextEdit()
-        self.text_edit_right.setFont(font)
-        self.text_edit_right.setStyleSheet("QPlainTextEdit { padding-top: 0px; padding-bottom: 0px; }")
-        self.text_edit_right.setReadOnly(True)
-
-        self.splitter = QSplitter(Qt.Horizontal)
-        self.splitter.setHandleWidth(4)  # Устанавливаем минимальную ширину разделителя
-        self.splitter.addWidget(self.text_edit_left)
-        self.splitter.addWidget(self.text_edit_middle)
-        self.splitter.addWidget(self.text_edit_right)
-
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)  # Убираем отступы
-        layout.setSpacing(0)  # Убираем промежутки между элементами
-        layout.addWidget(self.splitter)
-        self.setLayout(layout)
+        self.text_edit_middle = text_edit_middle
+        self.text_edit_right = text_edit_right
 
         # Синхронизация скроллинга между окнами
         self.text_edit_left.verticalScrollBar().valueChanged.connect(self.sync_scrolls)
