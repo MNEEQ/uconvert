@@ -564,8 +564,16 @@
             <string notr="true">font: 8pt &quot;Consolas&quot;;</string>
            </property>
           </widget>
-          <widget class="NumberedTextEdit" name="textEdit2"/>
-          <widget class="NumberedTextEdit" name="textEdit3"/>
+          <widget class="NumberedTextEdit" name="textEdit2">
+           <property name="styleSheet">
+            <string notr="true">font: 8pt &quot;Consolas&quot;;</string>
+           </property>
+          </widget>
+          <widget class="NumberedTextEdit" name="textEdit3">
+           <property name="styleSheet">
+            <string notr="true">font: 8pt &quot;Consolas&quot;;</string>
+           </property>
+          </widget>
          </widget>
         </item>
        </layout>
