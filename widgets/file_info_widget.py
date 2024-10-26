@@ -6,6 +6,7 @@ from widgets.numbered_text_edit import NumberedTextEdit
 import json
 import mimetypes
 import os
+import re
 import subprocess
 
 class FileInfoWidget(QWidget):
@@ -52,13 +53,26 @@ class FileInfoWidget(QWidget):
         input_files = self.text_edit_left.toPlainText().splitlines()
         output_names = []
 
-        for file in input_files:
+        for index, file in enumerate(input_files):
             if file.strip():  # Проверяем, не является ли строка пустой или содержащей только пробелы
-                if '[N]' in template:
-                    file_name = os.path.splitext(os.path.basename(file))[0]
-                    output_name = template.replace('[N]', file_name)
-                else:
-                    output_name = template
+                file_name = os.path.splitext(os.path.basename(file))[0]
+                # Получаем номер с учетом индекса
+                counter = index + 1
+                
+                # Обрабатываем шаблон
+                output_name = template
+                output_name = output_name.replace('[N]', file_name)
+
+                # Обрабатываем флаги внутри квадратных скобок
+                def replace_placeholder(match):
+                    num_hashes = len(match.group(1))  # Количество символов #
+                    return str(counter).zfill(num_hashes)  # Заменяем на номер с нужным количеством нулей
+
+                output_name = re.sub(r'\[(#+)\]', replace_placeholder, output_name)
+
+                # Обрабатываем случай с пустыми скобками
+                output_name = re.sub(r'\[\]', '[]', output_name)
+
                 output_names.append(output_name)
             else:
                 output_names.append('')  # Добавляем пустую строку, если входная строка пустая
