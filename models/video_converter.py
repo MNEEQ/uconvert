@@ -12,7 +12,7 @@ class ConvertVideoThread(QThread):
     _PROGRESS_RX = re.compile(r"time=(\d{2}):(\d{2}):(\d{2})\.\d{2}")
     _FPS_RX = re.compile(r"(\d+(?:\.\d+)?) fps")  # Регулярное выражение для поиска FPS в строке
 
-    def __init__(self, codec, crf, fps, preset, input_files, output_dir, ffmpeg_path, current_file_name):
+    def __init__(self, codec, crf, fps, preset, input_files, output_dir, ffmpeg_path, current_file_name, text_edit_middle):
         super(ConvertVideoThread, self).__init__()
         self.codec = codec
         self.crf = crf
@@ -23,12 +23,20 @@ class ConvertVideoThread(QThread):
         self.ffmpeg_path = ffmpeg_path
         self.current_file_name = current_file_name
         self.total_duration = None
+        self.text_edit_middle = text_edit_middle
 
     def run(self):
         total_files = len(self.input_files)
         current_file = 0
 
-        for input_file in self.input_files:
+        # Получаем имена выходных файлов из textEdit2
+        output_names = self.text_edit_middle.toPlainText().splitlines()
+
+        if len(output_names) != total_files:
+            print(f"Ошибка: количество выходных имен ({len(output_names)}) не совпадает с количеством входных файлов ({total_files}).")
+            return
+
+        for input_file, output_name in zip(self.input_files, output_names):
             filename = os.path.basename(input_file)
 
             # Используем пользовательский FPS, если он задан
@@ -41,9 +49,11 @@ class ConvertVideoThread(QThread):
                 if video_fps is None:
                     print(f"Не удалось извлечь FPS для {filename}, используем FPS по умолчанию.")
                     video_fps = 30  # Можно установить FPS по умолчанию, если ничего не извлечено
-            
-            output_name = self.current_file_name.replace('[N]', os.path.splitext(filename)[0])
-            output_file = os.path.join(self.output_dir, output_name + ".mp4")
+
+            # Формирование имени выходного файла из textEdit2
+            output_file = os.path.join(self.output_dir, output_name.strip() + ".mp4")  # Удаляем лишние пробелы и добавляем расширение
+
+            print(f"Обработка файла: {input_file} -> {output_file}")  # Для отладки
 
             process = subprocess.Popen([self.ffmpeg_path, '-i', input_file, '-r', str(video_fps), '-c:v', self.codec, 
                                         '-crf', str(self.crf), '-preset', self.preset, '-c:a', 'aac', '-b:a', '128k', output_file],
@@ -75,7 +85,7 @@ class ConvertVideoThread(QThread):
             process.wait()
             self.progress_signal.emit(100)
             current_file += 1
-            self.status_signal.emit(f"render: ({current_file}/{total_files}) " 
+            self.status_signal.emit(f"render: ({current_file}/{total_files}) "
                                     f"remaining: 00:00:00 "
                                     f"name: {filename} status: done")
 

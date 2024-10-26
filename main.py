@@ -132,7 +132,7 @@ class MainUI(QMainWindow):
         input_files = self.text_convert.toPlainText().splitlines()
         output_dir = self.path_save.text()
         ffmpeg_path = self.path_ffmpeg.text()
-        current_fileName = self.current_fileName.currentText()
+        current_file_name = self.current_fileName.currentText()
 
         processed_input_files = []
         for file in input_files:
@@ -145,11 +145,11 @@ class MainUI(QMainWindow):
         print(f"Input Files: {processed_input_files}")
         print(f"Output Directory: {output_dir}")
         print(f"FFmpeg Path: {ffmpeg_path}")
-        print(f"Current File Name: {current_fileName}")
+        print(f"Current File Name: {current_file_name}")
 
         if processed_input_files and output_dir and ffmpeg_path:
             # Передаем выбранный FPS или None в поток для обработки
-            self.thread = ConvertVideoThread(codec, crf, fps, preset, processed_input_files, output_dir, ffmpeg_path, current_fileName)
+            self.thread = ConvertVideoThread(codec, crf, fps, preset, processed_input_files, output_dir, ffmpeg_path, current_file_name, self.text_edit_middle)
             self.thread.progress_signal.connect(self.update_progress_bar)
             self.thread.status_signal.connect(self.update_status)
             self.thread.start()
