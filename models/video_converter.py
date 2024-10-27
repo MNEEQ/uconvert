@@ -92,7 +92,8 @@ class ConvertVideoThread(QThread):
     def get_video_fps(self, input_file):
         # Функция для извлечения FPS из видео.
         process = subprocess.Popen([self.ffmpeg_path, '-i', input_file],
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True,
+                                   creationflags=subprocess.CREATE_NO_WINDOW)
         stderr = process.stderr.read()
         process.wait()
 
