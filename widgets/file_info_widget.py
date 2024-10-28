@@ -14,6 +14,9 @@ class FileInfoWidget(QWidget):
     def __init__(self, text_convert, text_edit_middle, text_edit_right, current_fileName, parent=None):
         super(FileInfoWidget, self).__init__(parent)
 
+         # Устанавливаем атрибут, чтобы игнорировать события мыши
+        self.setAttribute(Qt.WA_TransparentForMouseEvents)
+
         self.current_fileName = current_fileName
         self.text_edit_left = text_convert
         self.text_edit_middle = text_edit_middle
@@ -100,7 +103,7 @@ class FileInfoWidget(QWidget):
 
     def update_right_editor(self):
         # Проверяем состояние action_textEdit3
-        if not self.parent_ui.action_textEdit3.isChecked():  # Используем self.parent_ui
+        if not (self.parent_ui and hasattr(self.parent_ui, 'action_textEdit3') and self.parent_ui.action_textEdit3.isChecked()):
             self.text_edit_right.setPlainText("")  # Оставляем текстовое поле пустым
             return
 
@@ -109,7 +112,7 @@ class FileInfoWidget(QWidget):
 
         table = Texttable()
         table.set_deco(Texttable.HEADER)
-        table.set_cols_align(["l", "r", "l", "c", "l", "l"])  # Выравнивание по столбцам (второй столбец - размер файла выравнен вправо)
+        table.set_cols_align(["l", "r", "l", "c", "l", "l"])  # Выравнивание по столбцам
         table.set_cols_valign(["m"] * 6)  # Вертикальное выравнивание по центру
 
         # Проверка на наличие путей к файлам
@@ -144,7 +147,7 @@ class FileInfoWidget(QWidget):
                         file_date
                     ])
             else:
-                table.add_row(['', '', '', '', '', '']) # Добавляем пустую строку вместо сообщения о не найденном файле
+                table.add_row(['', '', '', '', '', ''])  # Добавляем пустую строку вместо сообщения о не найденном файле
 
         # Получаем вывод таблицы
         output = table.draw()

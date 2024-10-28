@@ -36,8 +36,7 @@ class MainUI(QMainWindow):
         self.current_fileName: QComboBox = self.findChild(QComboBox, "current_fileName")
 
         # Создаем экземпляр FileInfoWidget с правильными аргументами
-        self.file_info_widget = FileInfoWidget(self.text_convert, self.text_edit_middle, self.text_edit_right, self.current_fileName)
-        # self.layout_text.addWidget(self.file_info_widget)
+        self.file_info_widget = FileInfoWidget(self.text_convert, self.text_edit_middle, self.text_edit_right, self.current_fileName, self)
         self.progressBar_convert: QProgressBar = self.findChild(QProgressBar, "progressBar_convert")
         self.path_save: QLineEdit = self.findChild(QLineEdit, "path_save")
         self.path_ffmpeg: QLineEdit = self.findChild(QLineEdit, "path_ffmpeg")
@@ -71,9 +70,6 @@ class MainUI(QMainWindow):
         self.action_textEdit1.triggered.connect(self.on_action_textEdit1_triggered)
         self.action_textEdit2.triggered.connect(self.on_action_textEdit2_triggered)
         self.action_textEdit3.triggered.connect(self.on_action_textEdit3_triggered)
-
-        # Передаем self в FileInfoWidget
-        self.file_info_widget = FileInfoWidget(self.text_convert, self.text_edit_middle, self.text_edit_right, self.current_fileName, self)
 
     def mousePressEvent(self, event):
         if not (self.path_save.underMouse() or
