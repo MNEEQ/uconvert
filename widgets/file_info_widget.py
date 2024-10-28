@@ -92,7 +92,7 @@ class FileInfoWidget(QWidget):
                 file_date = datetime.fromtimestamp(os.path.getmtime(normalized_path)).strftime('%Y-%m-%d %H:%M:%S')
                 file_info = self.get_file_info(normalized_path)
                 if file_info['is_video']:
-                    output_lines.append(f"{file_info['duration']}\t{self.format_size(file_size)}\t{file_info['resolution']}\t{file_info['fps']}\t{file_date}")
+                    output_lines.append(f"{file_info['duration']}\t{self.format_size(file_size)}\t{file_info['resolution']}\ta:{file_info['audio_count']}\t{file_info['fps']}\t{file_date}")
                 else:
                     output_lines.append(f"{file_info['duration']}\t{self.format_size(file_size)}\t\t{file_date}")
             else:
@@ -122,7 +122,7 @@ class FileInfoWidget(QWidget):
             'ffprobe', '-v', 'error', '-show_entries',
             'format=duration', '-show_streams', '-of', 'json', file_path
         ]
-        
+
         # Создаем объект STARTUPINFO
         startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW  # Скрываем окно консоли
@@ -135,26 +135,30 @@ class FileInfoWidget(QWidget):
                 metadata = json.loads(result.stdout)
                 duration = float(metadata['format']['duration'])
                 video_streams = [s for s in metadata['streams'] if s['codec_type'] == 'video']
+                audio_streams = [s for s in metadata['streams'] if s['codec_type'] == 'audio']  # Получаем аудиодорожки
 
                 if video_streams:
                     width = video_streams[0]['width']
                     height = video_streams[0]['height']
                     fps = eval(video_streams[0]['r_frame_rate'])  # Добавляем FPS
+                    audio_count = len(audio_streams)  # Считаем количество аудиодорожек
                     return {
                         "duration": self.format_duration(duration),
                         "resolution": f"{width}x{height}",
                         "fps": f"{fps:.3f} fps",  # Форматируем FPS
+                        "audio_count": audio_count,  # Добавляем количество аудиодорожек
                         "is_video": True
                     }
                 else:
                     return {
                         "duration": self.format_duration(duration),
                         "resolution": "",
+                        "audio_count": 0,  # Если видео дорожек нет, то аудио тоже 0
                         "is_video": False
                     }
         except Exception as e:
             print(f"Ошибка извлечения информации о файле: {e}")
-        return {"duration": "", "resolution": "", "fps": "", "is_video": False}
+        return {"duration": "", "resolution": "", "fps": "", "audio_count": 0, "is_video": False}
 
     def format_duration(self, seconds):
         hours, remainder = divmod(int(seconds), 3600)
