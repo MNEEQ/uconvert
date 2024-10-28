@@ -54,6 +54,7 @@ class MainUI(QMainWindow):
         self.btn_path_ffmpeg.clicked.connect(self.select_path_ffmpeg)
         self.btn_path_ytdlp.clicked.connect(self.select_ytdlp_path)
         self.current_fileName.setEditable(True)
+        self.text_edit_right.setReadOnly(True)
         self.load_settings()
 
         # Проверка стоит ли галочка темной темы
@@ -64,11 +65,14 @@ class MainUI(QMainWindow):
         if not (self.path_save.underMouse() or
                 self.path_ffmpeg.underMouse() or
                 self.path_ytdlp.underMouse() or
-                self.text_convert.underMouse()):
+                self.text_convert.underMouse()or
+                self.text_edit_middle.underMouse()):
             self.path_save.clearFocus()
             self.path_ffmpeg.clearFocus()
             self.path_ytdlp.clearFocus()
             self.text_convert.clearFocus()
+            self.text_edit_middle.clearFocus()
+            self.text_edit_right.clearFocus()
             self.current_fileName.clearFocus()
             self.crfCount.clearFocus()
             self.fpsCount.clearFocus()

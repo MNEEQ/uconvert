@@ -2,6 +2,7 @@ from datetime import datetime
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QPlainTextEdit, QSplitter, QTextEdit, QVBoxLayout, QWidget
+from texttable import Texttable
 from widgets.numbered_text_edit import NumberedTextEdit
 import json
 import mimetypes
@@ -83,7 +84,16 @@ class FileInfoWidget(QWidget):
         text = self.text_edit_left.toPlainText()
         file_paths = text.splitlines()
 
-        output_lines = []
+        table = Texttable()
+        table.set_deco(Texttable.HEADER)
+        table.set_cols_align(["l", "r", "l", "c", "l", "l"])  # Выравнивание по столбцам (второй столбец - размер файла выравнен вправо)
+        table.set_cols_valign(["m"] * 6)  # Вертикальное выравнивание по центру
+
+        # Проверка на наличие путей к файлам
+        if not file_paths or all(path.strip() == "" for path in file_paths):
+            self.text_edit_right.setPlainText("")  # Оставляем текстовое поле пустым
+            return
+
         for file_path in file_paths:
             normalized_path = self.normalize_path(file_path)
 
@@ -91,14 +101,36 @@ class FileInfoWidget(QWidget):
                 file_size = os.path.getsize(normalized_path)
                 file_date = datetime.fromtimestamp(os.path.getmtime(normalized_path)).strftime('%Y-%m-%d %H:%M:%S')
                 file_info = self.get_file_info(normalized_path)
-                if file_info['is_video']:
-                    output_lines.append(f"{file_info['duration']}\t{self.format_size(file_size)}\t{file_info['resolution']}\ta:{file_info['audio_count']}\t{file_info['fps']}\t{file_date}")
-                else:
-                    output_lines.append(f"{file_info['duration']}\t{self.format_size(file_size)}\t\t{file_date}")
-            else:
-                output_lines.append(f"\t\t\t") #output_lines.append(f"Файл не найден\t\t\t")
 
-        self.text_edit_right.setPlainText("\n".join(output_lines))
+                if file_info['is_video']:
+                    table.add_row([
+                        file_info['duration'],
+                        self.format_size(file_size),
+                        file_info['resolution'],
+                        f"a:{file_info['audio_count']}",
+                        file_info['fps'],
+                        file_date
+                    ])
+                else:
+                    table.add_row([
+                        file_info['duration'],
+                        self.format_size(file_size),
+                        '',
+                        '',
+                        '',
+                        file_date
+                    ])
+            else:
+                table.add_row(['', '', '', '', '', '']) # Добавляем пустую строку вместо сообщения о не найденном файле
+
+        # Получаем вывод таблицы
+        output = table.draw()
+
+        # Проверка на случай, если таблица пустая
+        if output is None or output.strip() == "":
+            self.text_edit_right.setPlainText("")  # Оставляем текстовое поле пустым
+            return
+        self.text_edit_right.setPlainText(output)
 
     def normalize_path(self, file_path):
         if file_path.startswith("file:///"):
