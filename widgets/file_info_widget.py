@@ -25,34 +25,31 @@ class FileInfoWidget(QWidget):
         self.text_edit_middle.verticalScrollBar().valueChanged.connect(self.sync_scrolls)
         self.text_edit_right.verticalScrollBar().valueChanged.connect(self.sync_scrolls)
 
-        # Обновляем среднее и правое окно при изменении текста
+        # Обновляем среднее окно при изменении текста
         self.text_edit_left.textChanged.connect(self.update_middle_editor)
-        self.text_edit_left.textChanged.connect(self.update_right_editor)
-        self.syncing = False
+        self.text_edit_left.textChanged.connect(self.update_right_editor_if_enabled)
 
         # Обновляем среднее окно при изменении текста в QComboBox
         self.current_fileName.currentTextChanged.connect(self.update_middle_editor)
 
-        # Подключаем сигнал изменения состояния action_textEdit3
-        if self.parent_ui and hasattr(self.parent_ui, 'action_textEdit3'):
-            self.parent_ui.action_textEdit3.toggled.connect(self.on_action_textEdit3_toggled)
+        # Подключаем сигнал изменения состояния action_textEdit3 и action_textEdit3_refresh
+        if self.parent_ui:
+            if hasattr(self.parent_ui, 'action_textEdit3'):
+                self.parent_ui.action_textEdit3.toggled.connect(self.on_action_textEdit3_toggled)
+
+            if hasattr(self.parent_ui, 'action_textEdit3_refresh'):
+                self.parent_ui.action_textEdit3_refresh.toggled.connect(self.on_action_textEdit3_refresh_toggled)
 
     def on_action_textEdit3_toggled(self, checked):
-        if checked:
-            self.update_right_editor()  # Обновляем textEdit3, если галочка установлена
-        else:
-            self.text_edit_right.setPlainText("")  # Очищаем textEdit3, если галочка снята
+        # Если action_textEdit3 включен, обновляем right editor, если refresh тоже включен
+        if checked and self.parent_ui.action_textEdit3_refresh.isChecked():
+            self.update_right_editor()
 
-    def on_action_textEdit3_toggled(self, checked):
+    def on_action_textEdit3_refresh_toggled(self, checked):
         if checked:
-            self.update_right_editor()  # Обновляем textEdit3, если галочка установлена
-        else:
-            self.text_edit_right.setPlainText("")  # Очищаем textEdit3, если галочка снята
+            self.update_right_editor_if_enabled()  # Обновляем right editor, если галочка установлена
 
     def sync_scrolls(self, value):
-        if self.syncing:
-            return
-        self.syncing = True
         sender = self.sender()
         if sender == self.text_edit_left.verticalScrollBar():
             self.text_edit_middle.verticalScrollBar().setValue(value)
@@ -63,7 +60,6 @@ class FileInfoWidget(QWidget):
         else:
             self.text_edit_left.verticalScrollBar().setValue(value)
             self.text_edit_middle.verticalScrollBar().setValue(value)
-        self.syncing = False
 
     def update_middle_editor(self):
         # Обновляем среднее текстовое поле с фактическими именами файлов
@@ -96,6 +92,11 @@ class FileInfoWidget(QWidget):
                 output_names.append('')  # Добавляем пустую строку, если входная строка пустая
 
         self.text_edit_middle.setPlainText('\n'.join(output_names))
+
+    def update_right_editor_if_enabled(self):
+        # Проверяем состояние action_textEdit3 и action_textEdit3_refresh
+        if self.parent_ui.action_textEdit3.isChecked() and self.parent_ui.action_textEdit3_refresh.isChecked():
+            self.update_right_editor()
 
     def update_right_editor(self):
         # Проверяем состояние action_textEdit3

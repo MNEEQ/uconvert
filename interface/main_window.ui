@@ -1020,6 +1020,8 @@
      <addaction name="action_textEdit1"/>
      <addaction name="action_textEdit2"/>
      <addaction name="action_textEdit3"/>
+     <addaction name="separator"/>
+     <addaction name="action_textEdit3_refresh"/>
     </widget>
     <addaction name="menuLayout"/>
    </widget>
@@ -1071,6 +1073,20 @@
    </property>
    <property name="shortcut">
     <string>Alt+Shift+3</string>
+   </property>
+  </action>
+  <action name="action_textEdit3_refresh">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>File Info Refresh</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
  </widget>

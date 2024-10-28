@@ -65,6 +65,7 @@ class MainUI(QMainWindow):
         self.action_textEdit1 = self.findChild(QAction, "action_textEdit1")
         self.action_textEdit2 = self.findChild(QAction, "action_textEdit2")
         self.action_textEdit3 = self.findChild(QAction, "action_textEdit3")
+        self.action_textEdit3_refresh = self.findChild(QAction, "action_textEdit3_refresh")
 
         # QAction сигналы
         self.action_textEdit1.triggered.connect(self.on_action_textEdit1_triggered)
