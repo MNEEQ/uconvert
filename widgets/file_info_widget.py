@@ -33,6 +33,22 @@ class FileInfoWidget(QWidget):
         # Обновляем среднее окно при изменении текста в QComboBox
         self.current_fileName.currentTextChanged.connect(self.update_middle_editor)
 
+        # Подключаем сигнал изменения состояния action_textEdit3
+        if self.parent_ui and hasattr(self.parent_ui, 'action_textEdit3'):
+            self.parent_ui.action_textEdit3.toggled.connect(self.on_action_textEdit3_toggled)
+
+    def on_action_textEdit3_toggled(self, checked):
+        if checked:
+            self.update_right_editor()  # Обновляем textEdit3, если галочка установлена
+        else:
+            self.text_edit_right.setPlainText("")  # Очищаем textEdit3, если галочка снята
+
+    def on_action_textEdit3_toggled(self, checked):
+        if checked:
+            self.update_right_editor()  # Обновляем textEdit3, если галочка установлена
+        else:
+            self.text_edit_right.setPlainText("")  # Очищаем textEdit3, если галочка снята
+
     def sync_scrolls(self, value):
         if self.syncing:
             return
