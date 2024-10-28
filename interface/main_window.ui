@@ -565,6 +565,9 @@
            </property>
           </widget>
           <widget class="NumberedTextEdit" name="textEdit2">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="styleSheet">
             <string notr="true">font: 8pt &quot;Consolas&quot;;</string>
            </property>
@@ -1003,7 +1006,73 @@
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <widget class="QMenu" name="menuLayout">
+     <property name="tearOffEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="title">
+      <string>Layout</string>
+     </property>
+     <addaction name="action_textEdit1"/>
+     <addaction name="action_textEdit2"/>
+     <addaction name="action_textEdit3"/>
+    </widget>
+    <addaction name="menuLayout"/>
+   </widget>
+   <addaction name="menuView"/>
   </widget>
+  <action name="action_textEdit1">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Input</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+1</string>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="action_textEdit2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>File Name</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+2</string>
+   </property>
+  </action>
+  <action name="action_textEdit3">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>File Info</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+3</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1024,5 +1093,38 @@
   <tabstop>btn_path_ytdlp</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>action_textEdit2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textEdit2</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>462</x>
+     <y>264</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_textEdit3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textEdit3</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>758</x>
+     <y>264</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

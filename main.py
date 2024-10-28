@@ -3,7 +3,7 @@ from models.video_converter import ConvertVideoThread
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QApplication, QCheckBox, QComboBox, QFileDialog, QLineEdit, QMainWindow, QProgressBar,
-    QPushButton, QStatusBar, QVBoxLayout, QWidget
+    QPushButton, QStatusBar, QVBoxLayout, QWidget, QAction
 )
 from PyQt5.uic import loadUi
 from widgets.file_info_widget import FileInfoWidget
@@ -60,6 +60,19 @@ class MainUI(QMainWindow):
         # Проверка стоит ли галочка темной темы
         self.checkBox_setDarkMode = self.findChild(QCheckBox, "checkBox_setDarkMode")
         self.checkBox_setDarkMode.stateChanged.connect(self.toggleDarkMode)
+
+        # QAction
+        self.action_textEdit1 = self.findChild(QAction, "action_textEdit1")
+        self.action_textEdit2 = self.findChild(QAction, "action_textEdit2")
+        self.action_textEdit3 = self.findChild(QAction, "action_textEdit3")
+
+        # QAction сигналы
+        self.action_textEdit1.triggered.connect(self.on_action_textEdit1_triggered)
+        self.action_textEdit2.triggered.connect(self.on_action_textEdit2_triggered)
+        self.action_textEdit3.triggered.connect(self.on_action_textEdit3_triggered)
+
+        # Передаем self в FileInfoWidget
+        self.file_info_widget = FileInfoWidget(self.text_convert, self.text_edit_middle, self.text_edit_right, self.current_fileName, self)
 
     def mousePressEvent(self, event):
         if not (self.path_save.underMouse() or
@@ -243,6 +256,39 @@ class MainUI(QMainWindow):
             self.showMaximized()
         else:
             self.showNormal()  # Если окно не развернуто и не полноэкранное, показываем обычное окно
+
+    def update_actions(self):
+        # Если action_textEdit1 включена
+        if self.action_textEdit1.isChecked():
+            self.action_textEdit2.setChecked(False)
+            self.action_textEdit3.setChecked(False)
+        else:
+            # Если action_textEdit1 выключена, проверяем другие действия
+            if not self.action_textEdit2.isChecked() and not self.action_textEdit3.isChecked():
+                self.action_textEdit1.setChecked(True)  # Включаем action_textEdit1
+
+    def on_action_textEdit1_triggered(self):
+        # Если action_textEdit1 выключена, включаем action_textEdit2 и action_textEdit3
+        if not self.action_textEdit1.isChecked():
+            self.action_textEdit2.setChecked(True)
+            self.action_textEdit3.setChecked(True)
+
+        # Обновляем действия
+        self.update_actions()
+
+    def on_action_textEdit2_triggered(self):
+        # Если action_textEdit2 включена, выключаем action_textEdit1
+        if self.action_textEdit2.isChecked():
+            self.action_textEdit1.setChecked(False)
+        # Обновляем действия
+        self.update_actions()
+
+    def on_action_textEdit3_triggered(self):
+        # Если action_textEdit3 включена, выключаем action_textEdit1
+        if self.action_textEdit3.isChecked():
+            self.action_textEdit1.setChecked(False)
+        # Обновляем действия
+        self.update_actions()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

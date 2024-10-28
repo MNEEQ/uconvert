@@ -18,6 +18,7 @@ class FileInfoWidget(QWidget):
         self.text_edit_left = text_convert
         self.text_edit_middle = text_edit_middle
         self.text_edit_right = text_edit_right
+        self.parent_ui = parent  # Сохраняем ссылку на родительский объект
 
         # Синхронизация скроллинга между окнами
         self.text_edit_left.verticalScrollBar().valueChanged.connect(self.sync_scrolls)
@@ -81,6 +82,11 @@ class FileInfoWidget(QWidget):
         self.text_edit_middle.setPlainText('\n'.join(output_names))
 
     def update_right_editor(self):
+        # Проверяем состояние action_textEdit3
+        if not self.parent_ui.action_textEdit3.isChecked():  # Используем self.parent_ui
+            self.text_edit_right.setPlainText("")  # Оставляем текстовое поле пустым
+            return
+
         text = self.text_edit_left.toPlainText()
         file_paths = text.splitlines()
 
@@ -143,6 +149,10 @@ class FileInfoWidget(QWidget):
         return file_path
 
     def get_file_info(self, file_path):
+        # Проверяем состояние action_textEdit3
+        if not self.parent_ui.action_textEdit3.isChecked():
+            return {"duration": "", "resolution": "", "is_video": False}
+
         mime_type, _ = mimetypes.guess_type(file_path)
         if mime_type:
             if mime_type.startswith('video') or mime_type.startswith('audio'):
@@ -150,6 +160,10 @@ class FileInfoWidget(QWidget):
         return {"duration": "", "resolution": "", "is_video": False}
 
     def extract_media_info(self, file_path):
+        # Проверяем состояние action_textEdit3
+        if not self.parent_ui.action_textEdit3.isChecked():
+            return {"duration": "", "resolution": "", "fps": "", "audio_count": 0, "is_video": False}
+
         command = [
             'ffprobe', '-v', 'error', '-show_entries',
             'format=duration', '-show_streams', '-of', 'json', file_path
@@ -193,11 +207,19 @@ class FileInfoWidget(QWidget):
         return {"duration": "", "resolution": "", "fps": "", "audio_count": 0, "is_video": False}
 
     def format_duration(self, seconds):
+        # Проверяем состояние action_textEdit3
+        if not self.parent_ui.action_textEdit3.isChecked():
+            return ""
+
         hours, remainder = divmod(int(seconds), 3600)
         minutes, seconds = divmod(remainder, 60)
         return f"{hours:02}:{minutes:02}:{seconds:02}"
 
     def format_size(self, size_bytes):
+        # Проверяем состояние action_textEdit3
+        if not self.parent_ui.action_textEdit3.isChecked():
+            return ""
+
         if size_bytes < 1024:
             return f"{size_bytes} B"
         elif size_bytes < 1024**2:
