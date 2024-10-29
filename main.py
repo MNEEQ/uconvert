@@ -36,7 +36,8 @@ class MainUI(QMainWindow):
         self.current_fileName: QComboBox = self.findChild(QComboBox, "current_fileName")
 
         # Создаем экземпляр FileInfoWidget с правильными аргументами
-        self.file_info_widget = FileInfoWidget(self.text_convert, self.text_edit_middle, self.text_edit_right, self.current_fileName, self)
+        self.file_info_widget = FileInfoWidget(self.text_convert, self.text_edit_middle, self.text_edit_right, self.current_fileName)
+        # self.layout_text.addWidget(self.file_info_widget)
         self.progressBar_convert: QProgressBar = self.findChild(QProgressBar, "progressBar_convert")
         self.path_save: QLineEdit = self.findChild(QLineEdit, "path_save")
         self.path_ffmpeg: QLineEdit = self.findChild(QLineEdit, "path_ffmpeg")
@@ -70,6 +71,9 @@ class MainUI(QMainWindow):
         self.action_textEdit1.triggered.connect(self.on_action_textEdit1_triggered)
         self.action_textEdit2.triggered.connect(self.on_action_textEdit2_triggered)
         self.action_textEdit3.triggered.connect(self.on_action_textEdit3_triggered)
+
+        # Передаем self в FileInfoWidget
+        self.file_info_widget = FileInfoWidget(self.text_convert, self.text_edit_middle, self.text_edit_right, self.current_fileName, self)
 
     def mousePressEvent(self, event):
         if not (self.path_save.underMouse() or
@@ -196,7 +200,11 @@ class MainUI(QMainWindow):
             "checkBox_alwaysOnTop": self.checkBox_alwaysOnTop.isChecked(),
             "window_fullscreen": self.isFullScreen(),   # Сохраняем статус полноэкранного режима
             "window_maximized": self.isMaximized(),      # Сохраняем статус развернутого окна
-            "checkBox_setDarkMode": self.checkBox_setDarkMode.isChecked()
+            "checkBox_setDarkMode": self.checkBox_setDarkMode.isChecked(),
+            "action_textEdit1": self.action_textEdit1.isChecked(),  # Сохраняем статус action_textEdit1
+            "action_textEdit2": self.action_textEdit2.isChecked(),  # Сохраняем статус action_textEdit2
+            "action_textEdit3": self.action_textEdit3.isChecked(),  # Сохраняем статус action_textEdit3
+            "action_textEdit3_refresh": self.action_textEdit3_refresh.isChecked()  # Сохраняем статус action_textEdit3_refresh
         }
 
         # Если окно не полноэкранное и не развернутое, сохраняем его положение и размеры
@@ -217,7 +225,13 @@ class MainUI(QMainWindow):
 
     def load_settings(self):
         if not os.path.exists(self.SETTINGS_FILE):
-            setLightMode(self) # Если файл настроек не существует, устанавливаем светлую тему
+            # Если файл настроек не существует, устанавливаем значения по умолчанию
+            self.action_textEdit1.setChecked(False)  # action_textEdit1 выкл
+            self.action_textEdit2.setChecked(True)   # action_textEdit2 вкл
+            self.action_textEdit3.setChecked(True)   # action_textEdit3 вкл
+            self.action_textEdit3_refresh.setChecked(True)  # action_textEdit3_refresh вкл
+
+            setLightMode(self)  # Если файл настроек не существует, устанавливаем светлую тему
             return
 
         with open(self.SETTINGS_FILE, "r", encoding="utf-8") as f:
@@ -237,6 +251,12 @@ class MainUI(QMainWindow):
         self.checkBox_alwaysOnTop.setChecked(settings.get("checkBox_alwaysOnTop", False))
         self.checkBox_setDarkMode.setChecked(settings.get("checkBox_setDarkMode", False))
         self.toggleDarkMode()  # Установить тему в зависимости от состояния чекбокса
+
+        # Восстановление статусов галочек
+        self.action_textEdit1.setChecked(settings.get("action_textEdit1", False))
+        self.action_textEdit2.setChecked(settings.get("action_textEdit2", True))  # Устанавливаем значение по умолчанию
+        self.action_textEdit3.setChecked(settings.get("action_textEdit3", True))  # Устанавливаем значение по умолчанию
+        self.action_textEdit3_refresh.setChecked(settings.get("action_textEdit3_refresh", True))  # Устанавливаем значение по умолчанию
 
         # Восстановление позиции и размера окна, если не включен полноэкранный/развернутый режим
         if self.checkBox_savePos.isChecked() and "window_position" in settings and not settings.get("window_fullscreen", False) and not settings.get("window_maximized", False):
