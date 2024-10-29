@@ -47,7 +47,7 @@ def setDarkMode(window: QMainWindow):
             border-radius: 2px;
             color: white;
         }
-            QCheckBox {
+        QCheckBox {
             background-color: #2A2A2A;
             border-style: solid;
             border: 1px solid #474747;

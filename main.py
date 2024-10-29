@@ -102,8 +102,14 @@ class MainUI(QMainWindow):
     def toggleDarkMode(self):
         if self.checkBox_setDarkMode.isChecked():
             setDarkMode(self)
+            self.text_convert.lineNumberArea.setDarkMode(True)
+            self.text_edit_middle.lineNumberArea.setDarkMode(True)
+            self.text_edit_right.lineNumberArea.setDarkMode(True)
         else:
             setLightMode(self)
+            self.text_convert.lineNumberArea.setDarkMode(False)
+            self.text_edit_middle.lineNumberArea.setDarkMode(False)
+            self.text_edit_right.lineNumberArea.setDarkMode(False)
 
     def _process_path(self, path: str) -> str:
         drive, path = os.path.splitdrive(path)

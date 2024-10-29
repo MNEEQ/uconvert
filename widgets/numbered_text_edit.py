@@ -6,14 +6,23 @@ class LineNumberArea(QWidget):
     def __init__(self, parent=None):
         super(LineNumberArea, self).__init__(parent)
         self.line_number_font = QFont("Consolas", 8)
+        self.normal_background_color = QColor("#C0C0C0")  # Цвет для светлой темы
+        self.dark_background_color = QColor("#2A2A2A")  # Цвет для темной темы
+        self.normal_pen_color = Qt.black  # Цвет нумерации для светлой темы
+        self.dark_pen_color = Qt.white  # Цвет нумерации для темной темы
+        self.is_dark_mode = False  # Устанавливаем флаг для темной темы
+
+    def setDarkMode(self, dark_mode: bool):
+        self.is_dark_mode = dark_mode
 
     def sizeHint(self):
         return self.editor.lineNumberAreaSize()
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        painter.fillRect(event.rect(), Qt.lightGray) # вместо Qt.lightGray Qt.lightGray QColor("#C0C0C0") или QColor(200, 200, 200)
-        painter.setFont(self.line_number_font)
+        background_color = self.dark_background_color if self.is_dark_mode else self.normal_background_color
+        painter.fillRect(event.rect(), background_color)  # Цвет заливки
+        painter.setPen(self.dark_pen_color if self.is_dark_mode else self.normal_pen_color)  # Цвет нумерации строк
         block = self.parent().firstVisibleBlock()
         blockNumber = block.blockNumber()
         top = self.parent().blockBoundingGeometry(block).translated(self.parent().contentOffset()).top()
@@ -22,7 +31,6 @@ class LineNumberArea(QWidget):
         while block.isValid() and top <= event.rect().bottom():
             if block.isVisible() and bottom >= event.rect().top():
                 number = str(blockNumber + 1)
-                painter.setPen(Qt.black)
                 rect = QRect(0, int(top), self.width() - 6, int(self.parent().fontMetrics().height()))
                 painter.drawText(rect, Qt.AlignRight, number)
             block = block.next()
