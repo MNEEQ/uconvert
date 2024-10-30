@@ -16,33 +16,34 @@ class LineNumberArea(QWidget):
         self.is_dark_mode = dark_mode
 
     def sizeHint(self):
-        return self.editor.lineNumberAreaSize()
+        return self.parent().lineNumberAreaSize()  # Убедитесь, что метод lineNumberAreaSize() определен в родительском классе
 
     def paintEvent(self, event):
         painter = QPainter(self)
         background_color = self.dark_background_color if self.is_dark_mode else self.normal_background_color
         painter.fillRect(event.rect(), background_color)  # Цвет заливки
         painter.setPen(self.dark_pen_color if self.is_dark_mode else self.normal_pen_color)  # Цвет нумерации строк
-        block = self.parent().firstVisibleBlock()
+        
+        parent = self.parent()  # Сохраняем родителя в переменной
+        block = parent.firstVisibleBlock()
         blockNumber = block.blockNumber()
-        top = self.parent().blockBoundingGeometry(block).translated(self.parent().contentOffset()).top()
-        bottom = top + self.parent().blockBoundingRect(block).height()
+        top = parent.blockBoundingGeometry(block).translated(parent.contentOffset()).top()
+        bottom = top + parent.blockBoundingRect(block).height()
 
         while block.isValid() and top <= event.rect().bottom():
             if block.isVisible() and bottom >= event.rect().top():
                 number = str(blockNumber + 1)
-                rect = QRect(0, int(top), self.width() - 6, int(self.parent().fontMetrics().height()))
+                rect = QRect(0, int(top), self.width() - 6, int(parent.fontMetrics().height()))
                 painter.drawText(rect, Qt.AlignRight, number)
             block = block.next()
             top = bottom
-            bottom = top + self.parent().blockBoundingRect(block).height()
+            bottom = top + parent.blockBoundingRect(block).height()
             blockNumber += 1
 
 class NumberedTextEdit(QPlainTextEdit):
     def __init__(self, parent=None):
         super(NumberedTextEdit, self).__init__(parent)
         self.lineNumberArea = LineNumberArea(self)
-        self.lineNumberArea.setStyleSheet("background-color: lightgray; border: 12px solid gray")
         self.blockCountChanged.connect(self.updateLineNumberAreaWidth)
         self.updateRequest.connect(self.updateLineNumberArea)
         self.cursorPositionChanged.connect(self.highlightCurrentLine)

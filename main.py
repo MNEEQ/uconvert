@@ -2,8 +2,8 @@ from interface.theme_main_window import setLightMode, setDarkMode
 from models.video_converter import ConvertVideoThread
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QApplication, QCheckBox, QComboBox, QFileDialog, QLineEdit, QMainWindow, QProgressBar,
-    QPushButton, QStatusBar, QVBoxLayout, QWidget, QAction
+    QAction, QApplication, QCheckBox, QComboBox, QFileDialog, QLineEdit,
+    QMainWindow, QProgressBar, QPushButton, QStatusBar
 )
 from PyQt5.uic import loadUi
 from widgets.file_info_widget import FileInfoWidget
@@ -17,11 +17,14 @@ class MainUI(QMainWindow):
 
     def __init__(self):
         super(MainUI, self).__init__()
+        self.SETTINGS_FILE = "settings.json"
+        self.setup_ui()
+        self.connect_signals()
+        self.load_settings()
+
+    def setup_ui(self):
         base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))  # Корректный путь для PyInstaller
         ui_path = os.path.join(base_path, "interface", "main_window.ui")  # Используем base_path для формирования пути
-        self.SETTINGS_FILE = "settings.json"
-
-        # Проверяем существование файла
         if not os.path.exists(ui_path):
             raise FileNotFoundError(f"UI file not found: {ui_path}")
 
@@ -29,23 +32,28 @@ class MainUI(QMainWindow):
         self.centralwidget.setContentsMargins(9, 0, 9, 9)
         self.tabWidget.setContentsMargins(9, 0, 9, 9)
 
-        # Инициализируем и добавляем пользовательские виджеты
+        # Инициализация виджетов
         self.text_convert: NumberedTextEdit = self.findChild(NumberedTextEdit, "textEdit1")
         self.text_edit_middle: NumberedTextEdit = self.findChild(NumberedTextEdit, "textEdit2")
         self.text_edit_right: NumberedTextEdit = self.findChild(NumberedTextEdit, "textEdit3")
         self.current_fileName: QComboBox = self.findChild(QComboBox, "current_fileName")
-
-        # Создаем экземпляр FileInfoWidget с правильными аргументами
-        self.file_info_widget = FileInfoWidget(self.text_convert, self.text_edit_middle, self.text_edit_right, self.current_fileName)
-        # self.layout_text.addWidget(self.file_info_widget)
+        self.file_info_widget = FileInfoWidget(self.text_convert, self.text_edit_middle, self.text_edit_right, self.current_fileName, self)
         self.progressBar_convert: QProgressBar = self.findChild(QProgressBar, "progressBar_convert")
         self.path_save: QLineEdit = self.findChild(QLineEdit, "path_save")
         self.path_ffmpeg: QLineEdit = self.findChild(QLineEdit, "path_ffmpeg")
         self.path_ytdlp: QLineEdit = self.findChild(QLineEdit, "path_ytdlp")
         self.statusbar: QStatusBar = self.findChild(QStatusBar, "statusbar")
         self.btn_render: QPushButton = self.findChild(QPushButton, "btn_render")
+        self.checkBox_setDarkMode = self.findChild(QCheckBox, "checkBox_setDarkMode")
         self.current_fileName: QComboBox = self.findChild(QComboBox, "current_fileName")
 
+        # QAction
+        self.action_textEdit1 = self.findChild(QAction, "action_textEdit1")
+        self.action_textEdit2 = self.findChild(QAction, "action_textEdit2")
+        self.action_textEdit3 = self.findChild(QAction, "action_textEdit3")
+        self.action_textEdit3_refresh = self.findChild(QAction, "action_textEdit3_refresh")
+
+    def connect_signals(self):
         # Настройка событий
         self.fpsEnable.stateChanged.connect(self.fpsCustom)
         self.checkBox_alwaysOnTop.stateChanged.connect(self.update_always_on_top)
@@ -55,31 +63,18 @@ class MainUI(QMainWindow):
         self.btn_path_ytdlp.clicked.connect(self.select_ytdlp_path)
         self.current_fileName.setEditable(True)
         self.text_edit_right.setReadOnly(True)
-        self.load_settings()
-
-        # Проверка стоит ли галочка темной темы
-        self.checkBox_setDarkMode = self.findChild(QCheckBox, "checkBox_setDarkMode")
         self.checkBox_setDarkMode.stateChanged.connect(self.toggleDarkMode)
-
-        # QAction
-        self.action_textEdit1 = self.findChild(QAction, "action_textEdit1")
-        self.action_textEdit2 = self.findChild(QAction, "action_textEdit2")
-        self.action_textEdit3 = self.findChild(QAction, "action_textEdit3")
-        self.action_textEdit3_refresh = self.findChild(QAction, "action_textEdit3_refresh")
 
         # QAction сигналы
         self.action_textEdit1.triggered.connect(self.on_action_textEdit1_triggered)
         self.action_textEdit2.triggered.connect(self.on_action_textEdit2_triggered)
         self.action_textEdit3.triggered.connect(self.on_action_textEdit3_triggered)
 
-        # Передаем self в FileInfoWidget
-        self.file_info_widget = FileInfoWidget(self.text_convert, self.text_edit_middle, self.text_edit_right, self.current_fileName, self)
-
     def mousePressEvent(self, event):
         if not (self.path_save.underMouse() or
                 self.path_ffmpeg.underMouse() or
                 self.path_ytdlp.underMouse() or
-                self.text_convert.underMouse()or
+                self.text_convert.underMouse() or
                 self.text_edit_middle.underMouse()):
             self.path_save.clearFocus()
             self.path_ffmpeg.clearFocus()
@@ -231,12 +226,6 @@ class MainUI(QMainWindow):
 
     def load_settings(self):
         if not os.path.exists(self.SETTINGS_FILE):
-            # Если файл настроек не существует, устанавливаем значения по умолчанию
-            self.action_textEdit1.setChecked(False)  # action_textEdit1 выкл
-            self.action_textEdit2.setChecked(True)   # action_textEdit2 вкл
-            self.action_textEdit3.setChecked(True)   # action_textEdit3 вкл
-            self.action_textEdit3_refresh.setChecked(True)  # action_textEdit3_refresh вкл
-
             setLightMode(self)  # Если файл настроек не существует, устанавливаем светлую тему
             return
 
