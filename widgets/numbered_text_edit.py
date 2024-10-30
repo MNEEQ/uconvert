@@ -11,20 +11,33 @@ class LineNumberArea(QWidget):
         self.light_font_color = QColor("#000000")  # Цвет нумерации для светлой темы
         self.dark_font_color = QColor("#FFFFFF")  # Цвет нумерации для темной темы
         self.is_dark_mode = False  # Устанавливаем флаг для темной темы
+        self.rightRectColor = None  # Переменная для кастомного цвета
+
+    def setRightRectColor(self, color: QColor):
+        # Установка кастомного цвета для правого текстового поля
+        self.rightRectColor = color
+        self.update()  # Обновляем область нумерации
 
     def setDarkMode(self, dark_mode: bool):
         self.is_dark_mode = dark_mode
+        self.update()  # Обновляем область нумерации
 
     def sizeHint(self):
         return self.parent().lineNumberAreaSize()  # Убедитесь, что метод lineNumberAreaSize() определен в родительском классе
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        background_color = self.dark_background_color if self.is_dark_mode else self.light_background_color
-        painter.fillRect(event.rect(), background_color)  # Цвет заливки
-        painter.setPen(self.dark_font_color if self.is_dark_mode else self.light_font_color)  # Цвет нумерации строк
         
-        parent = self.parent()  # Сохраняем родителя в переменной
+        # Если установлен кастомный цвет для правого поля
+        if self.rightRectColor:
+            background_color = self.rightRectColor
+        else:
+            background_color = self.dark_background_color if self.is_dark_mode else self.light_background_color
+        
+        painter.fillRect(event.rect(), background_color)
+        painter.setPen(self.dark_font_color if self.is_dark_mode else self.light_font_color)
+
+        parent = self.parent()
         block = parent.firstVisibleBlock()
         blockNumber = block.blockNumber()
         top = parent.blockBoundingGeometry(block).translated(parent.contentOffset()).top()

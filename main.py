@@ -1,6 +1,7 @@
 from interface.theme_main_window import setLightMode, setDarkMode
 from models.video_converter import ConvertVideoThread
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import (
     QAction, QApplication, QCheckBox, QComboBox, QFileDialog, QLineEdit,
     QMainWindow, QProgressBar, QPushButton, QStatusBar
@@ -70,6 +71,8 @@ class MainUI(QMainWindow):
         self.action_textEdit2.triggered.connect(self.on_action_textEdit2_triggered)
         self.action_textEdit3.triggered.connect(self.on_action_textEdit3_triggered)
 
+        self.action_textEdit3_refresh.triggered.connect(self.textEdit3RectColor)
+
     def mousePressEvent(self, event):
         if not (self.path_save.underMouse() or
                 self.path_ffmpeg.underMouse() or
@@ -105,6 +108,26 @@ class MainUI(QMainWindow):
             self.text_convert.lineNumberArea.setDarkMode(False)
             self.text_edit_middle.lineNumberArea.setDarkMode(False)
             self.text_edit_right.lineNumberArea.setDarkMode(False)
+
+        # Обновляем цвет заливки области нумерации строк при переключении темы
+        self.updateLineNumberAreaColors()
+
+    def updateLineNumberAreaColors(self):
+        # Определяем цвет в зависимости от состояния галочки
+        if self.action_textEdit3_refresh.isChecked():
+            custom_color = QColor("#C0C0C0") if not self.checkBox_setDarkMode.isChecked() else QColor("#2A2A2A")
+        else:
+            custom_color = QColor("#FFFFFF") if not self.checkBox_setDarkMode.isChecked() else QColor("#202020")
+
+        # Применяем цвет к области нумерации строк
+        self.text_edit_right.lineNumberArea.setRightRectColor(custom_color)
+
+    def textEdit3RectColor(self):
+        # Определяем цвет в зависимости от состояния галочки и темы
+        custom_color = QColor("#C0C0C0") if (self.action_textEdit3_refresh.isChecked() and not self.checkBox_setDarkMode.isChecked()) else QColor("#2A2A2A") if self.action_textEdit3_refresh.isChecked() else QColor("#FFFFFF") if not self.checkBox_setDarkMode.isChecked() else QColor("#202020")
+        
+        # Применяем цвет к области нумерации строк textEdit3
+        self.text_edit_right.lineNumberArea.setRightRectColor(custom_color)
 
     def _process_path(self, path: str) -> str:
         drive, path = os.path.splitdrive(path)
@@ -268,6 +291,8 @@ class MainUI(QMainWindow):
             self.showMaximized()
         else:
             self.showNormal()  # Если окно не развернуто и не полноэкранное, показываем обычное окно
+
+        self.textEdit3RectColor()
 
     def update_actions(self):
         # Если action_textEdit1 включена
