@@ -6,10 +6,10 @@ class LineNumberArea(QWidget):
     def __init__(self, parent=None):
         super(LineNumberArea, self).__init__(parent)
         self.line_number_font = QFont("Consolas", 8)
-        self.normal_background_color = QColor("#C0C0C0")  # Цвет для светлой темы
+        self.light_background_color = QColor("#C0C0C0")  # Цвет для светлой темы
         self.dark_background_color = QColor("#2A2A2A")  # Цвет для темной темы
-        self.normal_pen_color = Qt.black  # Цвет нумерации для светлой темы
-        self.dark_pen_color = Qt.white  # Цвет нумерации для темной темы
+        self.light_font_color = QColor("#000000")  # Цвет нумерации для светлой темы
+        self.dark_font_color = QColor("#FFFFFF")  # Цвет нумерации для темной темы
         self.is_dark_mode = False  # Устанавливаем флаг для темной темы
 
     def setDarkMode(self, dark_mode: bool):
@@ -20,9 +20,9 @@ class LineNumberArea(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        background_color = self.dark_background_color if self.is_dark_mode else self.normal_background_color
+        background_color = self.dark_background_color if self.is_dark_mode else self.light_background_color
         painter.fillRect(event.rect(), background_color)  # Цвет заливки
-        painter.setPen(self.dark_pen_color if self.is_dark_mode else self.normal_pen_color)  # Цвет нумерации строк
+        painter.setPen(self.dark_font_color if self.is_dark_mode else self.light_font_color)  # Цвет нумерации строк
         
         parent = self.parent()  # Сохраняем родителя в переменной
         block = parent.firstVisibleBlock()
