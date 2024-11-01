@@ -115,7 +115,7 @@ class MainUI(QMainWindow):
     def updateLineNumberAreaColors(self):
         # Определяем цвет в зависимости от состояния галочки
         if self.action_textEdit3_refresh.isChecked():
-            custom_color = QColor("#C0C0C0") if not self.checkBox_setDarkMode.isChecked() else QColor("#2A2A2A")
+            custom_color = QColor("#F0F0F0") if not self.checkBox_setDarkMode.isChecked() else QColor("#2A2A2A")
         else:
             custom_color = QColor("#FFFFFF") if not self.checkBox_setDarkMode.isChecked() else QColor("#202020")
 
@@ -124,7 +124,7 @@ class MainUI(QMainWindow):
 
     def textEdit3RectColor(self):
         # Определяем цвет в зависимости от состояния галочки и темы
-        custom_color = QColor("#C0C0C0") if (self.action_textEdit3_refresh.isChecked() and not self.checkBox_setDarkMode.isChecked()) else QColor("#2A2A2A") if self.action_textEdit3_refresh.isChecked() else QColor("#FFFFFF") if not self.checkBox_setDarkMode.isChecked() else QColor("#202020")
+        custom_color = QColor("#F0F0F0") if (self.action_textEdit3_refresh.isChecked() and not self.checkBox_setDarkMode.isChecked()) else QColor("#2A2A2A") if self.action_textEdit3_refresh.isChecked() else QColor("#FFFFFF") if not self.checkBox_setDarkMode.isChecked() else QColor("#202020")
         
         # Применяем цвет к области нумерации строк textEdit3
         self.text_edit_right.lineNumberArea.setRightRectColor(custom_color)

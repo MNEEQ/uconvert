@@ -6,7 +6,7 @@ class LineNumberArea(QWidget):
     def __init__(self, parent=None):
         super(LineNumberArea, self).__init__(parent)
         self.line_number_font = QFont("Consolas", 8)
-        self.light_background_color = QColor("#C0C0C0")  # Цвет для светлой темы
+        self.light_background_color = QColor("#F0F0F0")  # Цвет для светлой темы
         self.dark_background_color = QColor("#2A2A2A")  # Цвет для темной темы
         self.light_font_color = QColor("#000000")  # Цвет нумерации для светлой темы
         self.dark_font_color = QColor("#FFFFFF")  # Цвет нумерации для темной темы
