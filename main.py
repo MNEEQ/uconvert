@@ -38,6 +38,8 @@ class MainUI(QMainWindow):
         self.text_edit_middle: NumberedTextEdit = self.findChild(NumberedTextEdit, "textEdit2")
         self.text_edit_right: NumberedTextEdit = self.findChild(NumberedTextEdit, "textEdit3")
         self.current_fileName: QComboBox = self.findChild(QComboBox, "current_fileName")
+        self.comboBoxFind: QComboBox = self.findChild(QComboBox, "comboBoxFind")
+        self.comboBoxReplace: QComboBox = self.findChild(QComboBox, "comboBoxReplace")
         self.file_info_widget = FileInfoWidget(self.text_convert, self.text_edit_middle, self.text_edit_right, self.current_fileName, self)
         self.progressBar_convert: QProgressBar = self.findChild(QProgressBar, "progressBar_convert")
         self.path_save: QLineEdit = self.findChild(QLineEdit, "path_save")
@@ -46,7 +48,6 @@ class MainUI(QMainWindow):
         self.statusbar: QStatusBar = self.findChild(QStatusBar, "statusbar")
         self.btn_render: QPushButton = self.findChild(QPushButton, "btn_render")
         self.checkBox_setDarkMode = self.findChild(QCheckBox, "checkBox_setDarkMode")
-        self.current_fileName: QComboBox = self.findChild(QComboBox, "current_fileName")
 
         # QAction
         self.action_textEdit1 = self.findChild(QAction, "action_textEdit1")
@@ -63,6 +64,8 @@ class MainUI(QMainWindow):
         self.btn_path_ffmpeg.clicked.connect(self.select_path_ffmpeg)
         self.btn_path_ytdlp.clicked.connect(self.select_ytdlp_path)
         self.current_fileName.setEditable(True)
+        self.comboBoxFind.setEditable(True)
+        self.comboBoxReplace.setEditable(True)
         self.text_edit_right.setReadOnly(True)
         self.checkBox_setDarkMode.stateChanged.connect(self.toggleDarkMode)
 
@@ -74,20 +77,23 @@ class MainUI(QMainWindow):
         self.action_textEdit3_refresh.triggered.connect(self.textEdit3RectColor)
 
     def mousePressEvent(self, event):
-        if not (self.path_save.underMouse() or
-                self.path_ffmpeg.underMouse() or
-                self.path_ytdlp.underMouse() or
-                self.text_convert.underMouse() or
-                self.text_edit_middle.underMouse()):
-            self.path_save.clearFocus()
-            self.path_ffmpeg.clearFocus()
-            self.path_ytdlp.clearFocus()
-            self.text_convert.clearFocus()
-            self.text_edit_middle.clearFocus()
-            self.text_edit_right.clearFocus()
-            self.current_fileName.clearFocus()
-            self.crfCount.clearFocus()
-            self.fpsCount.clearFocus()
+        focus_widgets = [
+            self.path_save,
+            self.path_ffmpeg,
+            self.path_ytdlp,
+            self.text_convert,
+            self.text_edit_middle,
+            self.text_edit_right,
+            self.current_fileName,
+            self.crfCount,
+            self.fpsCount,
+            self.comboBoxFind,
+            self.comboBoxReplace
+        ]
+
+        if not any(widget.underMouse() for widget in focus_widgets):
+            for widget in focus_widgets:
+                widget.clearFocus()
             print("Курсор мыши находится вне полей ввода.")
 
     def update_always_on_top(self):
