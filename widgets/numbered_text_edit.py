@@ -9,7 +9,7 @@ class LineNumberArea(QWidget):
         self.light_background_color = QColor("#F0F0F0")  # Цвет для светлой темы
         self.dark_background_color = QColor("#2A2A2A")  # Цвет для темной темы
         self.light_font_color = QColor("#000000")  # Цвет нумерации для светлой темы
-        self.dark_font_color = QColor("#FFFFFF")  # Цвет нумерации для темной темы
+        self.dark_font_color = QColor("#DFE1E2")  # Цвет нумерации для темной темы
         self.is_dark_mode = False  # Устанавливаем флаг для темной темы
         self.rightRectColor = None  # Переменная для кастомного цвета
 
@@ -27,13 +27,14 @@ class LineNumberArea(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        
+        painter.setFont(self.line_number_font)
+
         # Если установлен кастомный цвет для правого поля
         if self.rightRectColor:
             background_color = self.rightRectColor
         else:
             background_color = self.dark_background_color if self.is_dark_mode else self.light_background_color
-        
+
         painter.fillRect(event.rect(), background_color)
         painter.setPen(self.dark_font_color if self.is_dark_mode else self.light_font_color)
 

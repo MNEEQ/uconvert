@@ -54,6 +54,7 @@ class MainUI(QMainWindow):
         self.action_textEdit2 = self.findChild(QAction, "action_textEdit2")
         self.action_textEdit3 = self.findChild(QAction, "action_textEdit3")
         self.action_textEdit3_refresh = self.findChild(QAction, "action_textEdit3_refresh")
+        self.action_replace = self.findChild(QAction, "action_replace")
 
     def connect_signals(self):
         # Настройка событий
@@ -63,9 +64,6 @@ class MainUI(QMainWindow):
         self.btn_path_save.clicked.connect(self.select_folder_path_save)
         self.btn_path_ffmpeg.clicked.connect(self.select_path_ffmpeg)
         self.btn_path_ytdlp.clicked.connect(self.select_ytdlp_path)
-        self.current_fileName.setEditable(True)
-        self.comboBoxFind.setEditable(True)
-        self.comboBoxReplace.setEditable(True)
         self.text_edit_right.setReadOnly(True)
         self.checkBox_setDarkMode.stateChanged.connect(self.toggleDarkMode)
 
@@ -131,7 +129,7 @@ class MainUI(QMainWindow):
     def textEdit3RectColor(self):
         # Определяем цвет в зависимости от состояния галочки и темы
         custom_color = QColor("#F0F0F0") if (self.action_textEdit3_refresh.isChecked() and not self.checkBox_setDarkMode.isChecked()) else QColor("#2A2A2A") if self.action_textEdit3_refresh.isChecked() else QColor("#FFFFFF") if not self.checkBox_setDarkMode.isChecked() else QColor("#202020")
-        
+
         # Применяем цвет к области нумерации строк textEdit3
         self.text_edit_right.lineNumberArea.setRightRectColor(custom_color)
 
@@ -228,13 +226,14 @@ class MainUI(QMainWindow):
             "checkBox_savePos": self.checkBox_savePos.isChecked(),
             "checkBox_saveSize": self.checkBox_saveSize.isChecked(),
             "checkBox_alwaysOnTop": self.checkBox_alwaysOnTop.isChecked(),
-            "window_fullscreen": self.isFullScreen(),   # Сохраняем статус полноэкранного режима
+            "window_fullscreen": self.isFullScreen(),    # Сохраняем статус полноэкранного режима
             "window_maximized": self.isMaximized(),      # Сохраняем статус развернутого окна
             "checkBox_setDarkMode": self.checkBox_setDarkMode.isChecked(),
             "action_textEdit1": self.action_textEdit1.isChecked(),  # Сохраняем статус action_textEdit1
             "action_textEdit2": self.action_textEdit2.isChecked(),  # Сохраняем статус action_textEdit2
             "action_textEdit3": self.action_textEdit3.isChecked(),  # Сохраняем статус action_textEdit3
-            "action_textEdit3_refresh": self.action_textEdit3_refresh.isChecked()  # Сохраняем статус action_textEdit3_refresh
+            "action_textEdit3_refresh": self.action_textEdit3_refresh.isChecked(),  # Сохраняем статус action_textEdit3_refresh
+            "action_replace": self.action_replace.isChecked()
         }
 
         # Если окно не полноэкранное и не развернутое, сохраняем его положение и размеры
@@ -256,6 +255,7 @@ class MainUI(QMainWindow):
     def load_settings(self):
         if not os.path.exists(self.SETTINGS_FILE):
             setLightMode(self)  # Если файл настроек не существует, устанавливаем светлую тему
+            self.action_replace.setChecked(False)  # Устанавливаем action_replace как выключенный
             return
 
         with open(self.SETTINGS_FILE, "r", encoding="utf-8") as f:
@@ -281,6 +281,7 @@ class MainUI(QMainWindow):
         self.action_textEdit2.setChecked(settings.get("action_textEdit2", True))  # Устанавливаем значение по умолчанию
         self.action_textEdit3.setChecked(settings.get("action_textEdit3", True))  # Устанавливаем значение по умолчанию
         self.action_textEdit3_refresh.setChecked(settings.get("action_textEdit3_refresh", True))  # Устанавливаем значение по умолчанию
+        self.action_replace.setChecked(settings.get("action_replace", True))  # Устанавливаем значение по умолчанию как False
 
         # Восстановление позиции и размера окна, если не включен полноэкранный/развернутый режим
         if self.checkBox_savePos.isChecked() and "window_position" in settings and not settings.get("window_fullscreen", False) and not settings.get("window_maximized", False):
