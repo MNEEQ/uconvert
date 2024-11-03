@@ -8,6 +8,7 @@ class FindReplace:
         self.combo_box_find = combo_box_find
         self.combo_box_replace = combo_box_replace
         self.current_find_index = -1  # Индекс текущего найденного слова
+        self.positions = []  # Позиции всех найденных вхождений
 
     def find_next(self):
         text_to_find = self.combo_box_find.currentText()
@@ -16,25 +17,22 @@ class FindReplace:
 
         # Получаем текст из текстового поля
         text = self.text_edit.toPlainText()
-        
-        # Находим позиции всех вхождений
-        positions = [i.start() for i in re.finditer(re.escape(text_to_find), text)]
-        
-        if positions:
-            # Если индекс -1, это означает, что мы ищем первый элемент
-            if self.current_find_index == -1:
-                self.current_find_index = 0
-            else:
-                # Увеличиваем индекс, и если он выходит за пределы, сбрасываем его
-                self.current_find_index = (self.current_find_index + 1) % len(positions)
 
-            # Снимаем выделение с предыдущего слова
+        # Если мы еще не искали или текст изменился, обновляем список позиций
+        if self.current_find_index == -1 or not self.positions:
+            self.positions = [i.start() for i in re.finditer(re.escape(text_to_find), text)]
+
+        if self.positions:
+            # Увеличиваем индекс и сбрасываем его, если он выходит за пределы
+            self.current_find_index = (self.current_find_index + 1) % len(self.positions)
+
+            # Устанавливаем курсор на следующую позицию
             cursor = self.text_edit.textCursor()
-            cursor.setPosition(positions[self.current_find_index])
+            cursor.setPosition(self.positions[self.current_find_index])
             cursor.movePosition(cursor.Right, cursor.KeepAnchor, len(text_to_find))
             self.text_edit.setTextCursor(cursor)
         else:
-            # Если не найдено вхождений, сбрасываем индекс
+            # Если вхождений не найдено, сбрасываем индекс
             self.current_find_index = -1
 
     def find_all(self):
@@ -76,14 +74,25 @@ class FindReplace:
 
             # Проверяем, совпадает ли выделенный текст с текстом, который мы ищем
             if selected_text == text_to_find:
+                # Заменяем текст
                 cursor.insertText(text_to_replace)
+
+                # Сохраняем текущую позицию курсора после замены
+                current_position = cursor.position()
 
                 # Обновляем текстовое поле
                 updated_text = self.text_edit.toPlainText()
 
                 # Обновляем список позиций для нового текста
                 self.positions = [m.start() for m in re.finditer(re.escape(text_to_find), updated_text)]
-                self.current_find_index = -1  # Сбрасываем индекс
+
+                # Находим новое положение для текущего индекса, чтобы продолжить с того места
+                # где курсор остановился
+                self.current_find_index = -1  # Сброс индекса
+                for i, pos in enumerate(self.positions):
+                    if pos >= current_position:
+                        self.current_find_index = i - 1  # Обновляем индекс для следующего поиска
+                        break
 
         # Теперь вызываем find_next для выделения следующего вхождения
         self.find_next()
