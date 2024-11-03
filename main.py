@@ -1,4 +1,5 @@
 from interface.theme_main_window import setLightMode, setDarkMode
+from models.find_replace import FindReplace
 from models.video_converter import ConvertVideoThread
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
@@ -48,6 +49,7 @@ class MainUI(QMainWindow):
         self.statusbar: QStatusBar = self.findChild(QStatusBar, "statusbar")
         self.btn_render: QPushButton = self.findChild(QPushButton, "btn_render")
         self.checkBox_setDarkMode = self.findChild(QCheckBox, "checkBox_setDarkMode")
+        self.find_replace = FindReplace(self.text_edit_middle, self.comboBoxFind, self.comboBoxReplace)
 
         # QAction
         self.action_textEdit1 = self.findChild(QAction, "action_textEdit1")
@@ -73,6 +75,11 @@ class MainUI(QMainWindow):
         self.action_textEdit3.triggered.connect(self.on_action_textEdit3_triggered)
 
         self.action_textEdit3_refresh.triggered.connect(self.textEdit3RectColor)
+
+        self.btn_find.clicked.connect(self.find_replace.find_next)
+        self.btn_find_all.clicked.connect(self.find_replace.find_all)
+        self.btn_replace.clicked.connect(self.find_replace.replace)
+        self.btn_replace_all.clicked.connect(self.find_replace.replace_all)
 
     def mousePressEvent(self, event):
         focus_widgets = [
