@@ -1,4 +1,4 @@
-import re  # Добавьте этот импорт
+import re
 from PyQt5.QtWidgets import QComboBox
 from widgets.numbered_text_edit import NumberedTextEdit
 
@@ -68,72 +68,25 @@ class FindReplace:
             return
 
         cursor = self.text_edit.textCursor()
-        text = self.text_edit.toPlainText()
 
-        # Если есть выделение, заменяем его
+        # Проверяем, есть ли выделение
         if cursor.hasSelection():
-            cursor.insertText(text_to_replace)
-            # Обновляем текст после замены
-            text = self.text_edit.toPlainText()
-            # Сбрасываем индекс, так как мы заменили выделенный текст
-            self.current_find_index = -1
-            # Обновляем список позиций для нового текста
-            self.positions = [m.start() for m in re.finditer(re.escape(text_to_find), text)]
-            return
+            # Получаем выделенный текст
+            selected_text = cursor.selectedText()
 
-        # Если выделения нет, ищем следующее вхождение
-        if self.current_find_index == -1:
-            # Находим все позиции вхождений
-            self.positions = [m.start() for m in re.finditer(re.escape(text_to_find), text)]
-            self.current_find_index = 0  # Начинаем с первого вхождения
+            # Проверяем, совпадает ли выделенный текст с текстом, который мы ищем
+            if selected_text == text_to_find:
+                cursor.insertText(text_to_replace)
 
-        # Проверяем, есть ли вхождения
-        if self.positions:
-            # Получаем позицию текущего вхождения
-            current_position = self.positions[self.current_find_index]
+                # Обновляем текстовое поле
+                updated_text = self.text_edit.toPlainText()
 
-            # Устанавливаем курсор на текущее вхождение
-            cursor.setPosition(current_position)
-            cursor.movePosition(cursor.Right, cursor.KeepAnchor, len(text_to_find))
+                # Обновляем список позиций для нового текста
+                self.positions = [m.start() for m in re.finditer(re.escape(text_to_find), updated_text)]
+                self.current_find_index = -1  # Сбрасываем индекс
 
-            # Проверяем, правильно ли работает выделение
-            self.text_edit.setTextCursor(cursor)
-
-            # Заменяем текст
-            cursor.insertText(text_to_replace)
-
-            # Обновляем текстовое поле
-            updated_text = self.text_edit.toPlainText()
-
-            # После замены длина текста может измениться, корректируем смещение
-            diff_length = len(text_to_replace) - len(text_to_find)
-
-            # Обновляем список позиций с учетом смещения после каждой замены
-            new_positions = []
-            for pos in self.positions:
-                # Корректируем позиции относительно текущего смещения
-                if pos >= current_position + len(text_to_replace):
-                    new_positions.append(pos + diff_length)
-                else:
-                    new_positions.append(pos)
-
-            self.positions = new_positions
-
-            # Переходим к следующему вхождению
-            self.current_find_index += 1
-
-            # Если индекс выходит за пределы, сбрасываем его
-            if self.current_find_index >= len(self.positions):
-                self.current_find_index = -1  # Сбрасываем индекс, если больше нет вхождений
-            else:
-                # Устанавливаем курсор на следующее вхождение для выделения
-                next_position = self.positions[self.current_find_index]
-                cursor.setPosition(next_position)
-                cursor.movePosition(cursor.Right, cursor.KeepAnchor, len(text_to_find))
-                self.text_edit.setTextCursor(cursor)  # Устанавливаем курсор на следующее вхождение
-        else:
-            # Если не найдено вхождений, сбрасываем индекс
-            self.current_find_index = -1
+        # Теперь вызываем find_next для выделения следующего вхождения
+        self.find_next()
 
     def replace_all(self):
         text_to_find = self.combo_box_find.currentText()
