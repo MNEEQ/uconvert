@@ -42,19 +42,14 @@ class FindReplace:
 
         # Получаем текст из текстового поля
         text = self.text_edit.toPlainText()
-        cursor = self.text_edit.textCursor()
-        cursor.setPosition(0)  # Начинаем с начала текста
-        self.text_edit.setTextCursor(cursor)
 
-        # Снимаем выделение
-        self.text_edit.setTextCursor(cursor)
+        # Ищем все вхождения и запоминаем их позиции
+        self.positions = [i.start() for i in re.finditer(re.escape(text_to_find), text)]
 
-        # Найдем все вхождения
-        while True:
+        # Теперь выделяем все найденные вхождения
+        for pos in self.positions:
             cursor = self.text_edit.textCursor()
-            cursor = self.text_edit.find(text_to_find, cursor)
-            if cursor.isNull():
-                break
+            cursor.setPosition(pos)
             cursor.movePosition(cursor.Right, cursor.KeepAnchor, len(text_to_find))
             self.text_edit.setTextCursor(cursor)
 
