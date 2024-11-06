@@ -1194,6 +1194,7 @@
      <addaction name="action_textEdit3"/>
      <addaction name="separator"/>
      <addaction name="action_textEdit3_refresh"/>
+     <addaction name="action_url_refresh"/>
     </widget>
     <addaction name="menuLayout"/>
    </widget>
@@ -1280,6 +1281,20 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="action_url_refresh">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>URL Refresh</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
    </property>
   </action>
  </widget>
