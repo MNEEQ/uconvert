@@ -1,6 +1,7 @@
 from interface.theme_main_window import setLightMode, setDarkMode
 from models.find_replace import FindReplace
 from models.video_converter import ConvertVideoThread
+from models.video_downloader import VideoDownloader, DownloadThread
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import (
@@ -151,8 +152,28 @@ class MainUI(QMainWindow):
             print(f"Выбрана папка для сохранения: {folder_path}")
 
     def renderPressed(self):
-        print("Кнопка нажата, начинаем конвертацию...")
-        self.convert_video()
+        print("Кнопка нажата, начинаем обработку...")
+
+        input_text = self.text_convert.toPlainText().strip().splitlines()
+        urls = []
+        files = []
+
+        for line in input_text:
+            line = line.strip()
+            if line.startswith("http://") or line.startswith("https://"):
+                urls.append(line)
+            else:
+                files.append(line)
+
+        output_dir = self.path_save.text()
+        ytdlp_path = self.path_ytdlp.text()
+
+        if urls:
+            self.download_thread = DownloadThread(urls, output_dir, ytdlp_path)
+            self.download_thread.start()
+
+        if files:
+            self.convert_video(files)
 
     def fpsCustom(self, state: int):
         if state == self.CUSTOM_FPS_ENABLED:
@@ -176,7 +197,7 @@ class MainUI(QMainWindow):
                 self.path_ytdlp.setText(self._process_path(file_path))
                 print(f"Выбран путь к ytdlp: {file_path}")
 
-    def convert_video(self):
+    def convert_video(self, input_files):
         codec = self.list_codec.currentText()
         crf = self.crfCount.value()
         # Передаем пользовательский FPS, если галочка установлена
