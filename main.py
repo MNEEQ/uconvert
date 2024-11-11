@@ -51,6 +51,7 @@ class MainUI(QMainWindow):
         self.btn_render: QPushButton = self.findChild(QPushButton, "btn_render")
         self.checkBox_setDarkMode = self.findChild(QCheckBox, "checkBox_setDarkMode")
         self.find_replace = FindReplace(self.text_edit_middle, self.comboBoxFind, self.comboBoxReplace)
+        self.comboBoxProxy: QComboBox = self.findChild(QComboBox, "comboBoxProxy")
 
         # QAction
         self.action_textEdit1 = self.findChild(QAction, "action_textEdit1")
@@ -94,7 +95,8 @@ class MainUI(QMainWindow):
             self.crfCount,
             self.fpsCount,
             self.comboBoxFind,
-            self.comboBoxReplace
+            self.comboBoxReplace,
+            self.comboBoxProxy
         ]
 
         if not any(widget.underMouse() for widget in focus_widgets):
