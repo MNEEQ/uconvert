@@ -598,7 +598,7 @@
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QPushButton" name="btn_render">
+         <widget class="QPushButton" name="btn_start">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
             <horstretch>0</horstretch>
@@ -618,7 +618,7 @@
            </size>
           </property>
           <property name="text">
-           <string>RENDER</string>
+           <string>START</string>
           </property>
           <property name="shortcut">
            <string>F12</string>
@@ -806,7 +806,7 @@
         <property name="geometry">
          <rect>
           <x>84</x>
-          <y>108</y>
+          <y>118</y>
           <width>103</width>
           <height>16</height>
          </rect>
@@ -850,7 +850,7 @@
         <property name="geometry">
          <rect>
           <x>65</x>
-          <y>109</y>
+          <y>119</y>
           <width>16</width>
           <height>16</height>
          </rect>
@@ -876,7 +876,7 @@
         <property name="geometry">
          <rect>
           <x>65</x>
-          <y>87</y>
+          <y>97</y>
           <width>16</width>
           <height>16</height>
          </rect>
@@ -889,7 +889,7 @@
         <property name="geometry">
          <rect>
           <x>84</x>
-          <y>86</y>
+          <y>96</y>
           <width>140</width>
           <height>16</height>
          </rect>
@@ -935,7 +935,7 @@
           <x>11</x>
           <y>9</y>
           <width>484</width>
-          <height>74</height>
+          <height>80</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
@@ -950,13 +950,13 @@
            <property name="minimumSize">
             <size>
              <width>400</width>
-             <height>20</height>
+             <height>22</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>400</width>
-             <height>20</height>
+             <height>22</height>
             </size>
            </property>
            <property name="font">
@@ -1079,13 +1079,13 @@
            <property name="minimumSize">
             <size>
              <width>400</width>
-             <height>20</height>
+             <height>22</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>400</width>
-             <height>20</height>
+             <height>22</height>
             </size>
            </property>
            <property name="font">
@@ -1106,10 +1106,34 @@
          </item>
          <item row="3" column="1">
           <widget class="QComboBox" name="comboBoxProxy">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>400</width>
+             <height>22</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>400</width>
+             <height>22</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <family>Consolas</family>
             </font>
+           </property>
+           <property name="mouseTracking">
+            <bool>true</bool>
+           </property>
+           <property name="acceptDrops">
+            <bool>false</bool>
            </property>
            <property name="editable">
             <bool>true</bool>
@@ -1167,7 +1191,7 @@
         <property name="geometry">
          <rect>
           <x>65</x>
-          <y>130</y>
+          <y>140</y>
           <width>16</width>
           <height>16</height>
          </rect>
@@ -1180,7 +1204,7 @@
         <property name="geometry">
          <rect>
           <x>84</x>
-          <y>129</y>
+          <y>139</y>
           <width>103</width>
           <height>16</height>
          </rect>

@@ -47,11 +47,11 @@ class MainUI(QMainWindow):
         self.path_save: QLineEdit = self.findChild(QLineEdit, "path_save")
         self.path_ffmpeg: QLineEdit = self.findChild(QLineEdit, "path_ffmpeg")
         self.path_ytdlp: QLineEdit = self.findChild(QLineEdit, "path_ytdlp")
+        self.comboBoxProxy: QComboBox = self.findChild(QComboBox, "comboBoxProxy")
         self.statusbar: QStatusBar = self.findChild(QStatusBar, "statusbar")
-        self.btn_render: QPushButton = self.findChild(QPushButton, "btn_render")
+        self.btn_start: QPushButton = self.findChild(QPushButton, "btn_start")
         self.checkBox_setDarkMode = self.findChild(QCheckBox, "checkBox_setDarkMode")
         self.find_replace = FindReplace(self.text_edit_middle, self.comboBoxFind, self.comboBoxReplace)
-        self.comboBoxProxy: QComboBox = self.findChild(QComboBox, "comboBoxProxy")
 
         # QAction
         self.action_textEdit1 = self.findChild(QAction, "action_textEdit1")
@@ -64,7 +64,7 @@ class MainUI(QMainWindow):
         # Настройка событий
         self.fpsEnable.stateChanged.connect(self.fpsCustom)
         self.checkBox_alwaysOnTop.stateChanged.connect(self.update_always_on_top)
-        self.btn_render.clicked.connect(self.renderPressed)
+        self.btn_start.clicked.connect(self.startPressed)
         self.btn_path_save.clicked.connect(self.select_folder_path_save)
         self.btn_path_ffmpeg.clicked.connect(self.select_path_ffmpeg)
         self.btn_path_ytdlp.clicked.connect(self.select_ytdlp_path)
@@ -88,6 +88,7 @@ class MainUI(QMainWindow):
             self.path_save,
             self.path_ffmpeg,
             self.path_ytdlp,
+            self.comboBoxProxy,
             self.text_convert,
             self.text_edit_middle,
             self.text_edit_right,
@@ -95,8 +96,7 @@ class MainUI(QMainWindow):
             self.crfCount,
             self.fpsCount,
             self.comboBoxFind,
-            self.comboBoxReplace,
-            self.comboBoxProxy
+            self.comboBoxReplace
         ]
 
         if not any(widget.underMouse() for widget in focus_widgets):
@@ -153,7 +153,7 @@ class MainUI(QMainWindow):
             self.path_save.setText(self._process_path(folder_path))
             print(f"Выбрана папка для сохранения: {folder_path}")
 
-    def renderPressed(self):
+    def startPressed(self):
         print("Кнопка нажата, начинаем обработку...")
 
         input_text = self.text_convert.toPlainText().strip().splitlines()
@@ -254,6 +254,7 @@ class MainUI(QMainWindow):
             "path_save": self.path_save.text(),
             "path_ffmpeg": self.path_ffmpeg.text(),
             "path_ytdlp": self.path_ytdlp.text(),
+            "comboBoxProxy": self.comboBoxProxy.currentText(),
             "checkBox_savePos": self.checkBox_savePos.isChecked(),
             "checkBox_saveSize": self.checkBox_saveSize.isChecked(),
             "checkBox_alwaysOnTop": self.checkBox_alwaysOnTop.isChecked(),
@@ -301,6 +302,7 @@ class MainUI(QMainWindow):
         self.path_save.setText(settings.get("path_save", ""))
         self.path_ffmpeg.setText(settings.get("path_ffmpeg", ""))
         self.path_ytdlp.setText(settings.get("path_ytdlp", ""))
+        self.comboBoxProxy.setCurrentText(settings.get("comboBoxProxy", ""))
         self.checkBox_savePos.setChecked(settings.get("checkBox_savePos", False))
         self.checkBox_saveSize.setChecked(settings.get("checkBox_saveSize", False))
         self.checkBox_alwaysOnTop.setChecked(settings.get("checkBox_alwaysOnTop", False))

@@ -17,12 +17,12 @@ def setLightMode(window: QMainWindow):
             padding-left: 4px;
             padding-right: 4px;
         }
-        QLineEdit {
-            background-color: white;
-            padding-top: 2px;
-            padding-bottom: 2px;
-            padding-left: 4px;
-            padding-right: 4px;
+        QCheckBox {
+            color: #000000;
+            background-color: #F0F0F0;
+            border-style: solid;
+            border: 1px solid #FFFFFF;
+            border-radius: 2px;
         }
         QComboBox {
             background-color: #F0F0F0;
@@ -33,6 +33,9 @@ def setLightMode(window: QMainWindow):
         }
         QTabWidget {
             background-color: white;
+        }
+        QSpinBox {
+            background-color: #F0F0F0;
         }
     ''')
 
