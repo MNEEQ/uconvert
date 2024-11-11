@@ -169,9 +169,10 @@ class MainUI(QMainWindow):
 
         output_dir = self.path_save.text()
         ytdlp_path = self.path_ytdlp.text()
+        proxy = self.comboBoxProxy.currentText().strip()  # Получаем текст из QComboBoxProxy
 
         if urls:
-            self.download_thread = DownloadThread(urls, output_dir, ytdlp_path)
+            self.download_thread = DownloadThread(urls, output_dir, ytdlp_path, proxy)  # Передаем прокси
             self.download_thread.start()
 
         if files:
