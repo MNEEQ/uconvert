@@ -72,25 +72,22 @@ class FileInfoWidget(QWidget):
 
         for index, file in enumerate(input_files):
             if file.strip():  # Проверяем, не является ли строка пустой или содержащей только пробелы
-                file_name = os.path.splitext(os.path.basename(file))[0]
-                # Получаем номер с учетом индекса
-                counter = index + 1
-                
-                # Обрабатываем шаблон
-                output_name = template
-                output_name = output_name.replace('[N]', file_name)
+                if file.startswith("http://") or file.startswith("https://"):
+                    video_title = self.get_video_title(file)
+                    output_names.append(video_title)
+                else:
+                    file_name = os.path.splitext(os.path.basename(file))[0]
+                    counter = index + 1
+                    output_name = template
+                    output_name = output_name.replace('[N]', file_name)
 
-                # Обрабатываем флаги внутри квадратных скобок
-                def replace_placeholder(match):
-                    num_hashes = len(match.group(1))  # Количество символов #
-                    return str(counter).zfill(num_hashes)  # Заменяем на номер с нужным количеством нулей
+                    def replace_placeholder(match):
+                        num_hashes = len(match.group(1))
+                        return str(counter).zfill(num_hashes)
 
-                output_name = re.sub(r'\[(#+)\]', replace_placeholder, output_name)
-
-                # Обрабатываем случай с пустыми скобками
-                output_name = re.sub(r'\[\]', '[]', output_name)
-
-                output_names.append(output_name)
+                    output_name = re.sub(r'\[(#+)\]', replace_placeholder, output_name)
+                    output_name = re.sub(r'\[\]', '[]', output_name)
+                    output_names.append(output_name)
             else:
                 output_names.append('')  # Добавляем пустую строку, если входная строка пустая
 
@@ -248,3 +245,13 @@ class FileInfoWidget(QWidget):
             return f"{size_bytes / 1024**2:.2f} MB"
         else:
             return f"{size_bytes / 1024**3:.2f} GB"
+
+    def get_video_title(self, url):
+        command = ['yt-dlp', '--get-title', url]
+        try:
+            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+            if result.returncode == 0:
+                return result.stdout.strip()  # Возвращаем заголовок
+        except Exception as e:
+            print(f"Ошибка при получении заголовка видео: {e}")
+        return "Не удалось получить заголовок"  # Если произошла ошибка

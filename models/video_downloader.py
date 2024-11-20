@@ -6,18 +6,16 @@ class VideoDownloader:
     def __init__(self, ytdlp_path):
         self.ytdlp_path = ytdlp_path
 
-    def download_video(self, url, output_dir, proxy=None):
+    def download_video(self, url, output_dir, filename_template='%(title)s.%(ext)s', proxy=None):
         command = [self.ytdlp_path]
 
         if proxy:  # Если указан прокси, добавляем его в команду
             command += ['--proxy', proxy]
 
-        command += [url, '-o', os.path.join(output_dir, '%(title)s.%(ext)s')]
-        
-        # Скрытие окна консоли
+        command += [url, '-o', os.path.join(output_dir, filename_template)]
         startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        
+
         try:
             subprocess.run(command, check=True, startupinfo=startupinfo)
             return True
@@ -26,14 +24,19 @@ class VideoDownloader:
             return False
 
 class DownloadThread(QThread):
-    def __init__(self, urls, output_dir, ytdlp_path, proxy=None):
+    def __init__(self, urls, output_dir, ytdlp_path, proxy=None, parent_ui=None, file_info_widget=None):
         super().__init__()
         self.urls = urls
         self.output_dir = output_dir
         self.ytdlp_path = ytdlp_path
         self.proxy = proxy  # Сохраняем прокси
+        self.parent_ui = parent_ui  # Сохраняем ссылку на родительский интерфейс
+        self.file_info_widget = file_info_widget  # Сохраняем ссылку на FileInfoWidget
 
     def run(self):
         downloader = VideoDownloader(self.ytdlp_path)
         for url in self.urls:
-            downloader.download_video(url, self.output_dir, self.proxy)  # Передаем прокси
+            # Получаем заголовок видео для использования в качестве имени файла
+            video_title = self.file_info_widget.get_video_title(url)  # Используем метод из FileInfoWidget
+            filename_template = f"{video_title}.%(ext)s"  # Используем заголовок видео как имя файла
+            downloader.download_video(url, self.output_dir, filename_template, self.proxy)  # Передаем прокси
