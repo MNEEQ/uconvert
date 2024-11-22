@@ -9,7 +9,7 @@ class VideoDownloader:
     def download_video(self, url, output_dir, filename_template='%(title)s.%(ext)s', proxy=None):
         command = [self.ytdlp_path]
 
-        if proxy:  # Если указан прокси, добавляем его в команду
+        if proxy:
             command += ['--proxy', proxy]
 
         command += [url, '-o', os.path.join(output_dir, filename_template)]
@@ -17,7 +17,7 @@ class VideoDownloader:
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
         try:
-            subprocess.run(command, check=True, startupinfo=startupinfo)
+            subprocess.run(command, check=True, startupinfo=startupinfo, creationflags=subprocess.CREATE_NO_WINDOW)
             return True
         except subprocess.CalledProcessError as e:
             print(f"Ошибка при скачивании видео: {e}")
@@ -29,14 +29,13 @@ class DownloadThread(QThread):
         self.urls = urls
         self.output_dir = output_dir
         self.ytdlp_path = ytdlp_path
-        self.proxy = proxy  # Сохраняем прокси
-        self.parent_ui = parent_ui  # Сохраняем ссылку на родительский интерфейс
-        self.file_info_widget = file_info_widget  # Сохраняем ссылку на FileInfoWidget
+        self.proxy = proxy
+        self.parent_ui = parent_ui
+        self.file_info_widget = file_info_widget
 
     def run(self):
         downloader = VideoDownloader(self.ytdlp_path)
         for url in self.urls:
-            # Получаем заголовок видео для использования в качестве имени файла
-            video_title = self.file_info_widget.get_video_title(url)  # Используем метод из FileInfoWidget
-            filename_template = f"{video_title}.%(ext)s"  # Используем заголовок видео как имя файла
-            downloader.download_video(url, self.output_dir, filename_template, self.proxy)  # Передаем прокси
+            video_title = self.file_info_widget.get_video_title(url)
+            filename_template = f"{video_title}.%(ext)s"
+            downloader.download_video(url, self.output_dir, filename_template, self.proxy)

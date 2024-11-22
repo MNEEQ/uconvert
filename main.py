@@ -2,6 +2,7 @@ from interface.theme_main_window import setLightMode, setDarkMode
 from models.find_replace import FindReplace
 from models.video_converter import ConvertVideoThread
 from models.video_downloader import VideoDownloader, DownloadThread
+from models.vot_cli_downloader import VotCliDownloader
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import (
@@ -174,6 +175,10 @@ class MainUI(QMainWindow):
         if urls:
             self.download_thread = DownloadThread(urls, output_dir, ytdlp_path, proxy, self, self.file_info_widget)
             self.download_thread.start()
+            self.vot_cli_thread = VotCliDownloader(urls, output_dir, ytdlp_path, self.file_info_widget)
+            self.vot_cli_thread.progress_signal.connect(self.update_status)
+            self.vot_cli_thread.error_signal.connect(self.update_status)
+            self.vot_cli_thread.start()
 
         if files:
             self.convert_video(files)
